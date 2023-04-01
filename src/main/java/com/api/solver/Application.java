@@ -14,8 +14,8 @@ public class Application {
 
 		MathFunction func = new MathFunction();
 		Solver solver = new Solver();
-		String eqn = "2.718^(x)-x^8";
-        double x0=-2;
+		String eqn = "x^2+x^3+1";
+        double x0=100;
 		double error=0.001;
 		int maxIter = 10000;
         solver.newtonRaphson(eqn,x0,error,maxIter);

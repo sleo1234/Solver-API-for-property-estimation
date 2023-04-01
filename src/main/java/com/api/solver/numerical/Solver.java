@@ -2,6 +2,9 @@ package com.api.solver.numerical;
 
 import org.nfunk.jep.ParseException;
 
+import java.util.ArrayList;
+import java.util.Vector;
+
 public class Solver {
 
     public Solver() {
@@ -10,24 +13,42 @@ public class Solver {
 
     MathFunction fun = new MathFunction();
 
-    public double newtonRaphson(String eqn, double x0, double error, int maxIter) throws ParseException {
+    ArrayList<Double> vec ;
+    public double newtonRaphson(String eqn, Double x0, Double error, int maxIter) throws ParseException {
         int iter = 0; //number of iterations
-        double sol = 0.0; // the returned solution
 
-        double h = fun.evalFun(eqn, x0) / fun.evalDer(eqn, x0);
-        while (Math.abs(h) > error && iter < maxIter) {
+        Double sol = 0.0; // the returned solution
+        int flag=0;
+
+        Double [] vec = new Double[maxIter];
+        vec[0] = x0;
+
+       // double h = fun.evalFun(eqn, x0) / fun.evalDer(eqn, x0);
 
 
-            h = fun.evalFun(eqn, x0) / fun.evalDer(eqn, x0);
-            x0 = x0 - h;
-            iter++;
-            System.out.println("Solution: " + sol + " after " + iter + " iterations");
-            sol = x0;
+        for (int i=1; i < maxIter; i++) {
+
+
+            vec[i] = vec[i-1]-fun.evalFun(eqn,vec[i-1]) / (fun.evalDer(eqn,vec[i-1]));
+
+            if (Math.abs(vec[i] - vec[i-1]) <= error ) {
+
+
+                sol=vec[i];
+                 flag = 1;
+                System.out.println("Solution: " + sol + " after " + i + " iterations");
+
+            }
+
+
+            if (flag>0) break;
+
+
         }
-
-        System.out.println("Solution: " + sol + " after " + iter + " iterations");
-
-
+        flag = -1;
+        if (flag>0) {
+            System.out.println("Solution not found.");
+        }
         return sol;
     }
 
