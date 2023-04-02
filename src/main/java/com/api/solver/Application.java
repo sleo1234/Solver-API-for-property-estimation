@@ -18,7 +18,7 @@ public class Application {
         double x0=100;
 		double error=0.001;
 		int maxIter = 10000;
-        solver.newtonRaphson(eqn,x0,error,maxIter);
+        //solver.newtonRaphson(eqn,x0,error,maxIter);
 		//solver.bisect(eqn,-100,100,error,maxIter);
 		//func.derivativeOf("cos(e^x)");
 		//func.evalDer("cos(e^x)",0);
