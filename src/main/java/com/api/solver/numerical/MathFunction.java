@@ -2,6 +2,7 @@ package com.api.solver.numerical;
 
 import org.lsmp.djep.djep.DJep;
 import org.lsmp.djep.djep.DiffRulesI;
+import org.lsmp.djep.djep.diffRules.MacroDiffRules;
 import org.nfunk.jep.ASTFunNode;
 import org.nfunk.jep.JEP;
 import org.nfunk.jep.Node;
@@ -9,7 +10,7 @@ import org.nfunk.jep.ParseException;
 
 public class MathFunction {
 
-    public MathFunction (){
+    public MathFunction () throws ParseException {
 
     }
     JEP jep = new JEP();
@@ -24,6 +25,7 @@ public class MathFunction {
         dJep.setAllowAssignment(true);
         dJep.addStandardDiffRules();
         dJep.setImplicitMul(true);
+
 
         Node node = dJep.parse(function);
         Node dNode = dJep.differentiate(node,"x");
@@ -42,6 +44,10 @@ public class MathFunction {
         dJep.setAllowUndeclared(true);
         dJep.setAllowAssignment(true);
         dJep.addStandardDiffRules();
+
+        MacroDiffRules rule = new MacroDiffRules(dJep,"ln","1/x");
+
+        dJep.addDiffRule(rule);
         dJep.setImplicitMul(true);
         Node node = dJep.parse(function);
         Node dNode = dJep.differentiate(node,"x");
@@ -57,13 +63,15 @@ public class MathFunction {
 
     public double evalFun(String expression,double val) throws ParseException {
         jep.addStandardFunctions();
-        //jep.addStandardConstants();
+       // jep.addStandardConstants();
+
         //jep.addComplex();
         jep.setAllowUndeclared(true);
         jep.setAllowAssignment(true);
 
         jep.setImplicitMul(true);
         jep.addVariable("x",val);
+
         Node node = jep.parse(expression);
         double value=(double) jep.evaluate(node);
 

@@ -7,7 +7,7 @@ import java.util.Vector;
 
 public class Solver {
 
-    public Solver() {
+    public Solver() throws ParseException {
 
     }
 
