@@ -63,8 +63,10 @@ public class PengRobinson {
 
 
     public Double calcfi (Double T, Double press,Double [] xMol){
-        props.setxMol(xMol);
+       // props.setxMol(xMol);
 
+
+        return 0.0;
     }
 
 }
