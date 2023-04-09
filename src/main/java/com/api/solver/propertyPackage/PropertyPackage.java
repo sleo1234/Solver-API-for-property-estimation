@@ -9,7 +9,7 @@ public class PropertyPackage {
     // C3H8, n-C4H10, n-C5H12 mixture
     //
 
-    int N_c = 3; // no. of components
+    int N_c ; // no. of components
 
     MathFunction fun = new MathFunction();
 
@@ -22,7 +22,7 @@ public class PropertyPackage {
 
     Double[] x_m = new Double[N_c];
 
-    Double R = 8.31; // J/ mol*
+    Double R = 8.31; // J/ mol*K
 
     Double[] molVol_i = new Double[N_c];
 
@@ -43,7 +43,7 @@ public class PropertyPackage {
         for (int i=0; i < N_c; i++) {
 
             K_i[i] = (P_cr[i]/press)*Math.pow(2.718,5.37*(1+acc[i])*(1- T_cr[i]/temp));
-System.out.println("K " + i+" "+K_i[i]);
+        System.out.println("K " + i+" "+K_i[i]);
         }
    return K_i;
     }
@@ -52,34 +52,10 @@ System.out.println("K " + i+" "+K_i[i]);
         this.omega_i = omega_i;
         T_cr = t_cr;
         P_cr = p_cr;
-
+        N_c = xMol.length;
         this.xMol = xMol;
     }
 //P_cr = {42.5,38.0,33.7};
-
-    public void setParams () {
-
-
-        omega_i[0] = 0.153;
-        omega_i[1] = 0.199;
-        omega_i[2] = 0.255;
-
-        T_cr[0] = 369.8;
-        T_cr[1] = 425.2;
-        T_cr[2] = 469.7;
-
-        P_cr[0] = 4.25; //Pa
-        P_cr[1] = 3.8;
-        P_cr[2] = 3.37;
-
-        xMol[0] = 0.5;
-        xMol[1] =  0.5;
-        xMol[2]  = 0.0;
-
-        molVol_i[0] = 203.0;
-        molVol_i[1] = 255.0;
-        molVol_i[2]  = 304.0;
-    }
 
 
     public Double[] a_M (Double T){
@@ -195,9 +171,10 @@ System.out.println("K " + i+" "+K_i[i]);
         Double B = (coVolParam(x_mol) * press) /(R * temp);
 
         double coeff1 = 1.0-B;
-        double coeff2 = (A-2*B-3*B*B - (A * B - B * B - B * B * B));
+        double coeff2 = (A-2*B-3*B*B);
+        double coeff3 =(A*B-B*B-B*B*B);
 
-          String exp = "x^3-" + String.valueOf(coeff1)+ "*x^2+" + String.valueOf(coeff2);
+          String exp = "x^3-" + String.valueOf(coeff1)+ "*x^2+" + String.valueOf(coeff2)+"*x-"+coeff3;
           System.out.println("---- coeff1 " + coeff1 + " ---- coeff2 " + coeff2);
         System.out.println(exp);
        return exp;
@@ -215,9 +192,21 @@ System.out.println("K " + i+" "+K_i[i]);
 
         String eqn = firstTerm+"-"+secondTerm;
         System.out.print("====="+eqn);
+
         return eqn;
     }
 
+    public String molVol (Double temp, Double press,Double[] x_mol){
+         String b = String.valueOf((coVolParam(x_mol)));
+         Double bb = (coVolParam(x_mol));
+         String alfa = String.valueOf(attractParam (temp,x_mol));
+        String firstTerm = String.valueOf(R*temp)+"/(x-"+b+")";
+        String secondTerm = alfa+"/(x^2+2*x*"+ b + "-"+String.valueOf(bb*bb)+")" ;
+        String eqn = firstTerm+"+"+secondTerm;
+        System.out.print("====="+eqn);
+
+        return eqn;
+    }
 
     public int getN_c() {
         return N_c;
@@ -237,5 +226,25 @@ System.out.println("K " + i+" "+K_i[i]);
 
     public Double[] getxMol() {
         return xMol;
+    }
+
+    public void setOmega_i(Double[] omega_i) {
+        this.omega_i = omega_i;
+    }
+
+    public void setT_cr(Double[] t_cr) {
+        T_cr = t_cr;
+    }
+
+    public void setP_cr(Double[] p_cr) {
+        P_cr = p_cr;
+    }
+
+    public void setX_m(Double[] x_m) {
+        this.x_m = x_m;
+    }
+
+    public void setxMol(Double[] xMol) {
+        this.xMol = xMol;
     }
 }

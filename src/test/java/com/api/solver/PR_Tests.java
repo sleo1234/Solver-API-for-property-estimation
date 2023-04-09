@@ -36,16 +36,19 @@ public class PR_Tests {
         T_cr[1] = 425.2;
         T_cr[2] = 469.7;
 
-        P_cr[0] = 4.25; //Pa
+        P_cr[0] = 4.25; //MPa
         P_cr[1] = 3.8;
         P_cr[2] = 3.37;
 
-        xMol[0] = 0.5;
-        xMol[1] =  0.5;
+        xMol[0] = 1.0;
+        xMol[1] =  0.0;
         xMol[2]  = 0.0;
 
         PropertyPackage props = new PropertyPackage(omega_i, T_cr,  P_cr,xMol);
-        Double T = 400.0;
+
+
+        Double T = 298.15;
+        Double press =0.101325; //MPa
 
         props.b_M();
         props.alfa_m(T);
@@ -54,24 +57,24 @@ public class PR_Tests {
         props.attractParam(T,xMol);
         props.coVolParam(xMol);
 
-        Double press =1.0; //MPa
-        Double temp =600.0;
+
 
         MathFunction func = new MathFunction();
         Solver solver = new Solver();
 
-        double x0= 90;
-        double error=0.001;
+        double x0= 1.0;
+        double error=0.0001;
         int maxIter = 10000;
 
 
-        props.calcKi(5.0,300.0);
-      String eqn = props.PengRobinsonEq(press,temp,xMol);
-       //solver.newtonRaphson(eqn,x0,error,maxIter);
-
-       solver.newtonRaphson(eqn,x0,error,maxIter);
-
-
+        //props.calcKi(5.0,300.0);
+      String eqn = props.PengRobinsonEq(press,T,xMol);
+       Double sol = solver.newtonRaphson(eqn,x0,error,maxIter);
+       Double volume = (8.31*T*sol)/press;
+       System.out.print("molar volume [cm3/mol]: " +volume);
+     //  solver.newtonRaphson(eqn,x0,error,maxIter);
+      // String eqnVol = props.molVol(T,press,xMol);
+      //solver.bisect(eqnVol,0,100000.0,error,maxIter);
 
     }
 }
