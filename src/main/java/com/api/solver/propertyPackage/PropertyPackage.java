@@ -71,7 +71,63 @@ public class PropertyPackage {
 
     }
 
+    public Double Am (Double T, Double [] xMol){
 
+
+        Double[] am = a_M(T);
+        Double sum =0.0;
+
+
+        for (int i=0; i < N_c; i++) {
+           for (int j=0; j < N_c; j++) {
+               sum = sum +xMol[j]* Math.sqrt(am[i] *am[j]);
+           }
+        }
+
+        return sum;
+
+    }
+
+
+    public Double alfam (Double T, Double [] xMol){
+
+
+
+        Double [] alfa = alfa_m (T);
+        Double sum=0.0;
+
+
+        for (int i=0; i < N_c; i++) {
+            for (int j=0; j < N_c; j++) {
+                if (xMol[i] == 0.0) {
+                    alfa[i]=0.0;
+                    alfa[j]=0.0;
+                    sum = sum + xMol[j] * alfa[i] * alfa[j];
+                }
+            }
+        }
+
+        return sum;
+
+    }
+
+
+    public Double AmRad (Double T, Double [] xMol){
+
+
+        Double[] am = a_M(T);
+        Double sum =0.0;
+
+
+        for (int i=0; i < N_c; i++) {
+
+                sum = sum +xMol[i]* (am[i]);
+
+        }
+
+        return sum;
+
+    }
 
 
     public Double[] b_M (){
