@@ -37,12 +37,12 @@ public class PropertyPackage {
 
 
 
-    public Double[] calcKi (Double press, Double temp) {
+    public Double[] calcKi (Double temp, Double press) {
         Double[] K_i = new Double[N_c];
         Double [] acc = omega_i;
         for (int i=0; i < N_c; i++) {
 
-            K_i[i] = (P_cr[i]/press)*Math.pow(2.718,5.37*(1+acc[i])*(1- T_cr[i]/temp));
+            K_i[i] = (P_cr[i]/press)*Math.exp(5.37*(1+acc[i])*(1- T_cr[i]/temp));
         System.out.println("K " + i+" "+K_i[i]);
         }
    return K_i;

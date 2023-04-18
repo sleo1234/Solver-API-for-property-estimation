@@ -7,9 +7,13 @@ import org.nfunk.jep.ParseException;
 
 public class PengRobinson {
 
-    PropertyPackage props;
+    PropertyPackage props =new PropertyPackage();
 
     Double volume;
+
+    public PengRobinson()throws ParseException {
+
+    }
 
     Double R =8.31; //m3 * Pa / (mol * K)
     public void setParams (Double [] omega_i, Double [] T_cr,  Double [] P_cr, Double[] xMol) throws ParseException {
