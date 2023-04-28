@@ -5,11 +5,17 @@ import com.api.solver.numerical.Solver;
 import com.api.solver.propertyPackage.PropertyPackage;
 import org.nfunk.jep.ParseException;
 
+import java.util.List;
+
 public class PengRobinson {
 
     PropertyPackage props =new PropertyPackage();
 
     Double volume;
+
+    List<Double> sols;
+    Double Zl;
+    Double Zv;
 
     public PengRobinson()throws ParseException {
 
@@ -36,7 +42,7 @@ public class PengRobinson {
         MathFunction func = new MathFunction();
         Solver solver = new Solver();
 
-        double x0= 0.1;
+        double x0= 1.0;
         double error=0.000001;
         int maxIter = 10000;
 
@@ -44,7 +50,25 @@ public class PengRobinson {
         //props.calcKi(5.0,300.0);
         String eqn = props.PengRobinsonEq(press,T,xMol);
         Double sol = solver.newtonRaphson(eqn,x0,error,maxIter);
-        // Double sol = solver.bisect(eqn,0.0,1.0,error,maxIter);
+         sols = solver.findAllSol(eqn,-1.0,5.0,0.1);
+
+        if(sols.size() == 1){
+            System.out.println("********************************************************");
+            System.out.println("********************************************************");
+            System.out.println("*************** System is in one phase *****************");
+            System.out.println("********************************************************");
+            System.out.println("********************************************************");
+        }
+
+        else{
+            System.out.println("********************************************************");
+            System.out.println("********************************************************");
+            System.out.println("*************** System is in" + sols.size()+  " phases *");
+            System.out.println("********************************************************");
+            System.out.println("********************************************************"); //mininum solution is for liquid
+           //maximum solution is for gases
+        }
+
 
         return sol;
     }

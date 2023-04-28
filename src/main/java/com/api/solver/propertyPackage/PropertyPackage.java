@@ -43,7 +43,7 @@ public class PropertyPackage {
         for (int i=0; i < N_c; i++) {
 
             K_i[i] = (P_cr[i]/press)*Math.exp(5.37*(1+acc[i])*(1- T_cr[i]/temp));
-        System.out.println("K " + i+" "+K_i[i]);
+
         }
    return K_i;
     }
@@ -229,7 +229,7 @@ public class PropertyPackage {
         double coeff1 = 1.0-B;
         double coeff2 = (A-2*B-3*B*B);
         double coeff3 =(A*B-B*B-B*B*B);
-
+System.out.println("======================================CoVolParam     "+coVolParam(x_mol));
           String exp = "x^3-" + String.valueOf(coeff1)+ "*x^2+" + String.valueOf(coeff2)+"*x-"+coeff3;
           System.out.println("---- coeff1 " + coeff1 + " ---- coeff2 " + coeff2);
         System.out.println(exp);

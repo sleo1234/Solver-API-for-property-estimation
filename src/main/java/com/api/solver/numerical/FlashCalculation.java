@@ -1,12 +1,17 @@
 package com.api.solver.numerical;
 
+import org.nfunk.jep.ParseException;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class FlashCalculation {
 
 
+  Solver solver = new Solver();
 
+    public FlashCalculation() throws ParseException {
+    }
 
     public void setInitialValues () {
 
@@ -17,14 +22,23 @@ public class FlashCalculation {
         int N_c = ki.length;
         List<String> params=generatePairs(ki,xMol);
         String eqn="";
-
+        List<String>Nomij = new ArrayList<>();
         for (int i=0; i< N_c; i++){
             eqn=eqn+params.get(i)+"+";
         }
+        for (int i=0; i< N_c; i++) {
+            Nomij.add("(x*" + String.valueOf((ki[i] - 1)) + ")");
+        }
+        String nom=joinElements(Nomij);
 
-        System.out.println("Equation: "+eqn);
 
-        return eqn;
+
+        String equation = "("+eqn.substring(0,eqn.length()-1)+")/(1+"+nom+")";
+        System.out.println("("+eqn.substring(0,eqn.length()-1)+")");
+        System.out.println("-----------------------------------------------------------------------------------------------------------------------------------------------" +
+                "--------------------------------------------------------------");
+        System.out.println("(1+"+nom+")");
+        return equation;
 
 
     }
@@ -33,19 +47,24 @@ public class FlashCalculation {
         List<String> pairs=new ArrayList<>();
 
         List<String> newPairs= new ArrayList<>();
+        String nomVal = "";
 
-        Double sum=0.0;
+
         int N_c = ki.length;
+System.out.println("----------++++++++++++++++++++++ K length"+N_c);
         List<String> ci=new ArrayList<>();
 
         Double [] jIndex = new Double[N_c-1];
         List<String>Bij = new ArrayList<>();
         List<String>Denij = new ArrayList<>();
+
         for (int i=0; i< N_c; i++){
             ci.add(String.valueOf(xMol[i]*(ki[i]-1)));
 
+
             System.out.println("----------+++++++ " + ci.get(i));
         }
+
         for (int i=0; i< N_c; i++){
 
             Bij.add("(1+x*"+String.valueOf(ki[i]-1)+")");
@@ -65,6 +84,15 @@ public class FlashCalculation {
         return newPairs;
 
     }
+
+    public Double solveVapFrac(Double [] ki, Double [] xMol) throws ParseException {
+        String eqn = flashEquation(ki,xMol);
+        Double x0=1.0;
+        Double error=1e-4;
+        int maxIter = 1000;
+        return solver.nRaphson(eqn,x0,error,maxIter);
+    }
+
 
     public List<String> removeAtIndex(List<String> arr, int index){
         List<String> newArr = new ArrayList<>();
