@@ -48,8 +48,8 @@ public class SolverTests {
         xMol[2] = 0.1; //
 
         Double T = 400.0;
-        Double press = 2.2;
-        int MAX_ITER=6;
+        Double press = 0.2;
+        int MAX_ITER=5;
 
         PengRobinson PR = new PengRobinson();
         PR.setParams(omega_i, T_cr, P_cr, xMol);
@@ -70,45 +70,58 @@ public class SolverTests {
 
 
         Double[] ki0 = PR.calcKi(T, press);
-
+        teta[0] = flash.solveVapFrac(ki0, xMol);
         for (int i = 0; i < N_c; i++) {
             K[0][i]=ki0[i];
-            System.out.println(" Initial K values: =========== "+ki0[i]);
-        System.out.println(" K values: =========== "+K[0][i]);
+
+            x[0][i] = xMol[i]/(1.0-(1.0-ki0[i])*teta[0]);
+            y[0][i] = ki0[i]*x[0][i];
+
+          //  System.out.println(" Initial K values: =========== ");
+           // solver.printArr(K[0]);
+        System.out.println(" Y values(---------): =========== "+y[i][0]);
 
        }
 
 
+        FiL[0] = PR.calcfi(T, press, x[0]);
+        FiV[0] = PR.calcfi(T, press, y[0]);
 
 
-        teta[0] = flash.solveVapFrac(ki0, xMol);
+        for (int j = 0; j < MAX_ITER-1; j++) {
+            solver.printArr(K[j]);
+            teta[j] = flash.solveVapFrac(K[j], xMol);
+
+            System.out.println("===========================================(00001) k values: ");
+            solver.printArr(K[0]);
+
+            Double[] diff = solver.substract(K[j],1.0);
+            Double [] product = solver.prodScal(diff,teta[j]);
+            Double [] diff2 = solver.substract(product,1.0);
+
+            x[j] = solver.divArr(xMol, diff2);//check this equation
+
+            solver.printArr(x[0]);
+            y[j] = solver.prodArr(K[j], x[j]);
+            FiL[j] = PR.calcfi(T, press, x[j]);
+            System.out.println("===========================================X values: ");
+            solver.printArr(x[j]);
+            System.out.println("===========================================Y values: ");
+            solver.printArr(y[j]);
+
+            FiV[j] = PR.calcfi(T, press, y[j]);
+
+            System.out.println("===========================================K values: ");
+
+            K[j+1] = solver.prodArr(solver.divArr(FiL[j], FiV[j]), K[j]);
+            solver.printArr(K[j]);
+        }
+
+
+
         System.out.println("===================      "+ teta[0]);
 
-            for (int j = 0; j < MAX_ITER-1; j++) {
-                solver.printArr(K[j]);
-                teta[j] = flash.solveVapFrac(K[j], xMol);
 
-
-                    Double [] product = solver.prodScal(K[j],teta[j]);
-                    Double[] diff = solver.substract(product,1.0);
-                x[j] = solver.divArr(xMol, diff);//check this equation
-
-                solver.printArr(x[0]);
-                y[j] = solver.prodArr(K[j], x[j]);
-                FiL[j] = PR.calcfi(T, press, x[j]);
-                System.out.println("===========================================X values: ");
-                solver.printArr(x[j]);
-                System.out.println("===========================================Y values: ");
-                solver.printArr(y[j]);
-                System.out.println("===========================================(0000) k values: ");
-                solver.printArr(K[0]);
-                FiV[j] = PR.calcfi(T, press, y[j]);
-
-                System.out.println("===========================================K values: ");
-
-                K[j+1] = solver.prodArr(solver.divArr(FiL[j], FiV[j]), K[j]);
-                solver.printArr(K[j]);
-            }
 
 
                  System.out.println("************************* X");
@@ -118,75 +131,14 @@ public class SolverTests {
         solver.printMat(y);
         System.out.println("************************* Molar frac matrix vapour phase");
                 solver.printArr(teta);
+
+
+        System.out.println("************************* Fugacities matrix liquid phase");
+        solver.printMat(FiL);
+
+        System.out.println("************************* Fugacities matrix vapour phase");
+        solver.printMat(FiV);
         System.out.println("************************* END");
-//
-//            for (int j=0; j < MAX_ITER; j++){
-//
-//                x[j] = solver.prodArr(solver.substract(K[j],1));
-//                x[j] = (x[j-1]) / (1 + teta[j-1] * solver.substract(K[j],1.0));
-//
-//                teta[j] = flash.solveVapFrac(K[j], x[j]);
-//            }
-
-       //solver.printMat(K[0]);
-
-
-        Double denVal = 0.0;
-     /*   String nomVal = "";
-       for (int i=0; i < N_c; i++) {
-
-
-           denVal = denVal +(1-ki[i])*xMol[i];
-
-           nomVal = nomVal+"(1-x)*"+String.valueOf(ki[i])+"+";
-           String den = String.valueOf(denVal);
-
-          exp = den+"/"+nomVal;
-
-           System.out.println("========================="+ den);
-       }
-
-       String equation = denVal+"/("+nomVal+"x)";
-        System.out.println("========================="+ equation);
-              solver.bisect(equation,0.0,100.0,0.0003,1000);
-    }*/
-
-        //String eqn = flash.flashEquation(ki,xMol);
-        // solver.newtonRaphson(eqn,9.0
-        //       ,0.001,1000);
-
-//        Double vapFrac = flash.solveVapFrac(ki0, xMol);
-//        Double[] newXi = new Double[N_c];
-//        Double[] newYi = new Double[N_c];
-//
-//        System.out.print("======================Vapour frac=======================: " + vapFrac);
-//
-//        for (int i = 0; i < N_c; i++) {
-//            newXi[i] = (xMol[i]) / (1 + vapFrac * (ki0[i] - 1));
-//            newYi[i] = ki0[i] * newXi[i];
-//
-//
-//        }
-//        Double[] newFiL = PR.calcfi(T, press, newXi);
-//        Double[] newFiV = PR.calcfi(T, press, newYi);
-//
-//
-//
-//        Double[] Ki_new = new Double[0];
-//        for (int i = 0; i < N_c; i++) {
-//
-//            Ki_new = new Double[N_c];
-//            Ki_new[i] = (newFiL[i] / newFiV[i]) * ki0[i];
-//
-//            System.out.println("----------- new x: " + newXi[i] + " -----------new Y: " + newYi[i]);
-//            System.out.println("----------- new Ki:" + Ki_new[i]);
-//
-//        }
-//        for (int i = 0; i < N_c; i++) {
-//
-//            System.out.println("----------- new fiL: " + newFiL[i] + " -----------new FiV: " + newFiV[i]);
-//
-//        }
 
 
 

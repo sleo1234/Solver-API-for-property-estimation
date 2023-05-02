@@ -14,45 +14,45 @@ public class Solver {
 
 
     public Double [] divArr(Double [] arr1, Double [] arr2){
-        Double [] newArr= new Double[arr1.length];
+        Double [] result= new Double[arr1.length];
 
         for (int i=0; i < arr1.length; i++){
-            newArr[i] = arr1[i]/arr2[i];
+            result[i] = arr1[i]/arr2[i];
         }
 
-        return newArr;
+        return result;
     }
 
     public Double [] divScal(Double k, Double [] arr){
-        Double [] newArr= new Double[arr.length];
+        Double [] result= new Double[arr.length];
 
         for (int i=0; i < arr.length; i++){
-            newArr[i] = k/arr[i];
+            result[i] = k/arr[i];
         }
 
-        return newArr;
+        return result;
     }
         public Double [] substract(Double [] arr, Double k){
-
+            Double [] result= new Double[arr.length];
                 for (int i=0; i < arr.length; i++){
-                    arr[i] =k-arr[i];
+                    result[i] =k-arr[i];
                 }
-                return arr;
+                return result;
         }
 
         public Double [] prodArr(Double [] arr1, Double [] arr2){
-
+            Double [] result= new Double[arr1.length];
             for (int i=0; i < arr1.length; i++){
-                arr1[i] = arr1[i]*arr2[i];
+                result[i] = arr1[i]*arr2[i];
             }
-        return arr1;
+        return result;
         }
     public Double [] prodScal(Double [] arr, Double k){
-
+        Double [] result= new Double[arr.length];
         for (int i=0; i < arr.length; i++){
-            arr[i] = arr[i]*k;
+            result[i] = arr[i]*k;
         }
-        return arr;
+        return result;
     }
     public void printMat(Double [][] mat){
 
