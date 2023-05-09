@@ -54,6 +54,18 @@ public class Solver {
         }
         return result;
     }
+
+    public Double [][] multMat (Double [][] mat, Double k){
+        Double [][] result= new Double[mat.length][mat[0].length];
+
+        for (int i=0; i < mat.length; i++){
+
+            for (int j=0; j < mat[i].length; j++){
+                result[i][j] = k * mat[i][j];
+            }
+        }
+        return result;
+    }
     public void printMat(Double [][] mat){
 
         for (int i = 0; i < mat.length; i++) {
@@ -66,11 +78,11 @@ public class Solver {
         }
 
 }
-public void printArr(Double [] arr){
-    for (int i=0; i < arr.length; i++){
-        System.out.println(arr[i]);
-    }
-}
+            public void printArr(Double [] arr){
+                for (int i=0; i < arr.length; i++){
+                    System.out.println(arr[i]);
+                }
+            }
 
     ArrayList<Double> vec ;
     public double newtonRaphson(String eqn, Double x0, Double error, int maxIter) throws ParseException {

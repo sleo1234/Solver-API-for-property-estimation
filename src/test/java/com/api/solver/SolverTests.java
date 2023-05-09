@@ -43,19 +43,17 @@ public class SolverTests {
         P_cr[1] = 3.8;
         P_cr[2] = 3.37;
 
-        xMol[0] = 0.7; //
-        xMol[1] = 0.2;  //
-        xMol[2] = 0.1; //
+        xMol[0] = 0.5; //
+        xMol[1] = 0.25;  //
+        xMol[2] = 0.25; //
 
         Double T = 400.0;
-        Double press = 0.2;
-        int MAX_ITER=5;
+        Double press = 2.0;
+        int MAX_ITER=10;
 
         PengRobinson PR = new PengRobinson();
         PR.setParams(omega_i, T_cr, P_cr, xMol);
-        // PR.calcZc(298.0,0.1,xMol);
-        // PR.calcMolVol(298.0,0.1,xMol);
-       // Double[] newFi = PR.calcfi(T, press, xMol);
+
         String exp = "";
 
 
@@ -64,6 +62,8 @@ public class SolverTests {
         Double[][] y = new Double[MAX_ITER][N_c];
         Double[][] FiL = new Double[MAX_ITER][N_c];
         Double[][] FiV = new Double[MAX_ITER][N_c];
+        Double [] ZiL = new Double[MAX_ITER];
+        Double [] ZiV = new Double[MAX_ITER];
         FlashCalculation flash = new FlashCalculation();
 
         Double[] teta = new Double[MAX_ITER];
@@ -77,16 +77,22 @@ public class SolverTests {
             x[0][i] = xMol[i]/(1.0-(1.0-ki0[i])*teta[0]);
             y[0][i] = ki0[i]*x[0][i];
 
+
           //  System.out.println(" Initial K values: =========== ");
            // solver.printArr(K[0]);
-        System.out.println(" Y values(---------): =========== "+y[i][0]);
+
 
        }
 
+        PR.calcZc(T,press,xMol);
 
-        FiL[0] = PR.calcfi(T, press, x[0]);
-        FiV[0] = PR.calcfi(T, press, y[0]);
+        System.out.print("--------0000000000000000000000000000");
 
+
+        Double Z0L = PR.getZl();
+        Double Z0V = PR.getZv();
+       // FiL[0] = PR.calcfi(T,press,x[0],Z0L);
+        //FiV[0] = PR.calcfi(T,press,y[0],Z0V);
 
         for (int j = 0; j < MAX_ITER-1; j++) {
             solver.printArr(K[j]);
@@ -100,19 +106,28 @@ public class SolverTests {
             Double [] diff2 = solver.substract(product,1.0);
 
             x[j] = solver.divArr(xMol, diff2);//check this equation
-
+            ZiL[j]=PR.calcZc(T,press,x[j]).get(0);
             solver.printArr(x[0]);
+
+            PR.calcZc(T,press,x[j]);
+
+            //ZiV[j] = PR.calcZc(T,press,y[j]);
             y[j] = solver.prodArr(K[j], x[j]);
-            FiL[j] = PR.calcfi(T, press, x[j]);
+            ZiV[j]=PR.calcZc(T,press,y[j]).get(0);
+            PR.calcZc(T,press,y[j]);
+            FiL[j] = PR.calcfi(T, press, x[j],ZiL[j]);
             System.out.println("===========================================X values: ");
             solver.printArr(x[j]);
             System.out.println("===========================================Y values: ");
             solver.printArr(y[j]);
 
-            FiV[j] = PR.calcfi(T, press, y[j]);
+            FiV[j] = PR.calcfi(T, press, y[j],ZiV[j]);
 
             System.out.println("===========================================K values: ");
-
+            System.out.println("===========================================Zl values: ");
+            solver.printArr(ZiL);
+            System.out.println("===========================================Zv values: ");
+            solver.printArr(ZiV);
             K[j+1] = solver.prodArr(solver.divArr(FiL[j], FiV[j]), K[j]);
             solver.printArr(K[j]);
         }
@@ -148,17 +163,22 @@ public class SolverTests {
 
     @Test
     public void testNumericalMethod() throws ParseException {
-        String eqn = "x^3-1.1774058941448093*x^2+2.1085211039159772*x+0.3537581591303739";
+        String eqn = "x^3-0.9586421759726231*x^2+0.16611443931647654*x-0.008722083960063482";
 
         Solver solver = new Solver();
+    PengRobinson PR = new PengRobinson();
 
         int maxIter = 10000;
         Double x0=1.0;
         Double error = 0.0001;
-
+        Double [] xMol = new Double[3];
+        xMol[0] = 0.5; //
+        xMol[1] = 0.25;  //
+        xMol[2] = 0.25; //
+    PR.calcfi(400.0,3.0,xMol,0.172);
       //  Double sol = solver.nRaphson(eqn,x0,error,maxIter);
-       List<Double> sols = solver.findAllSol(eqn,0.0,10.0,0.1);
-        sols.forEach(System.out :: println);
+    //   List<Double> sols = solver.findAllSol(eqn,0.0,10.0,0.01);
+        //sols.forEach(System.out :: println);
     }
 
 
@@ -191,24 +211,54 @@ public class SolverTests {
         P_cr[1] = 3.8;
         P_cr[2] = 3.37;
 
-        xMol[0] = 0.9; //
-        xMol[1] = 0.05;  //N2
-        xMol[2] = 0.05; //CH4
+        xMol[0] = 0.5; //
+        xMol[1] = 0.25;  //
+        xMol[2] = 0.25; //
 
-        Double T = 298.0;
-        Double press = 6.0;
+        Double T = 400.0;
+        Double press = 3.0;
         int MAX_ITER = 5;
 
         PengRobinson PR = new PengRobinson();
         PR.setParams(omega_i, T_cr, P_cr, xMol);
-        Double[] ki0 = PR.calcKi(T, press);
+
 
         List<Double> sols = new ArrayList<>();
+        Double [] yi = new Double[N_c];
 
         Double error = 1e-4;
         int max = 10000;
-        String eqn = "x^3+0.98*x^2+0.3*x+0.003";
 
+       // PR.calcfi(T,press,xMol);
+         //ESTIMATE PRESSURE
+        Double [] Pi0= PR.calcPi(T);
+        Double Pinit=0.0;
+        for (int i=0; i < N_c; i++){
+
+            Pinit = Pinit + xMol[i]*Pi0[i];
+        }
+        Double[] ki0 = PR.calcKi(T, Pinit);
+        for (int i=0; i < N_c; i++){
+
+            yi[i] = ki0[i] * xMol[i];
+        }
+        System.out.println("Estimated pressure: "+ Pinit);
+        solver.printArr(yi);
+
+        Double Zl = PR.calcZc(T,press,xMol).get(0);
+        Double [] FiL = PR.calcfi(T,Pinit,xMol,Zl);
+        Double Zv = PR.calcZc(T,press,xMol).get(1);
+        Double [] FiV = PR.calcfi(T,Pinit,yi,Zv);
+
+        System.out.println("*Z***: "+ Zl +" ******Zv " + Zv);
+        solver.printArr(FiL);
+        solver.printArr(FiV);
+       Double [] newKi =  solver.prodArr(ki0,solver.divArr(FiL,FiV));
+        System.out.println("New Ki------------");
+        solver.printArr(newKi);
+        Double [] newYi = solver.prodArr(newKi,xMol);
+        System.out.println("New Yi------------");
+        solver.printArr(newYi);
     }
 
 
@@ -226,6 +276,7 @@ public class SolverTests {
 
 
               solver.printArr(solver.divArr(mat1[0],arr1));
+              solver.printMat(solver.multMat(mat1,2.0));
         Double [] result = solver.prodArr(arr1,arr2);
         solver.printArr(result);
             }

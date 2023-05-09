@@ -87,9 +87,10 @@ System.out.println("----------++++++++++++++++++++++ K length"+N_c);
 
     public Double solveVapFrac(Double [] ki, Double [] xMol) throws ParseException {
         String eqn = flashEquation(ki,xMol);
-        Double x0=0.0;
+        Double x0=0.5;
         Double error=1e-4;
         int maxIter = 1000;
+        System.out.print("Vap frac: ---------------------------------------------------- "+ solver.nRaphson(eqn,x0,error,maxIter));
         return solver.nRaphson(eqn,x0,error,maxIter);
     }
 

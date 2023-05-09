@@ -5,17 +5,21 @@ import com.api.solver.numerical.Solver;
 import com.api.solver.propertyPackage.PropertyPackage;
 import org.nfunk.jep.ParseException;
 
+import java.util.Collections;
 import java.util.List;
 
 public class PengRobinson {
 
     PropertyPackage props =new PropertyPackage();
-
+    Solver solver = new Solver();
     Double volume;
 
     List<Double> sols;
     Double Zl;
     Double Zv;
+
+    Double [] fugL ;
+    Double [] fugV ;
 
     public PengRobinson()throws ParseException {
 
@@ -28,7 +32,7 @@ public class PengRobinson {
     }
 
 
-    public Double calcZc (Double T, Double press,Double [] xMol) throws ParseException {
+    public List< Double> calcZc (Double T, Double press,Double [] xMol) throws ParseException {
         props.setxMol(xMol);
         props.b_M();
         props.alfa_m(T);
@@ -49,7 +53,7 @@ public class PengRobinson {
 
         //props.calcKi(5.0,300.0);
         String eqn = props.PengRobinsonEq(press,T,xMol);
-        Double sol = solver.newtonRaphson(eqn,x0,error,maxIter);
+        //Double sol = solver.newtonRaphson(eqn,x0,error,maxIter);
          sols = solver.findAllSol(eqn,-1.0,5.0,0.1);
 
         if(sols.size() == 1){
@@ -60,17 +64,20 @@ public class PengRobinson {
             System.out.println("********************************************************");
         }
 
+
         else{
             System.out.println("********************************************************");
             System.out.println("********************************************************");
-            System.out.println("*************** System is in" + sols.size()+  " phases *");
+            System.out.println("*************** System is in 2  phases *");
             System.out.println("********************************************************");
             System.out.println("********************************************************"); //mininum solution is for liquid
            //maximum solution is for gases
         }
-
-
-        return sol;
+        Zl= Collections.min(sols);
+        Zv= Collections.max(sols);
+      System.out.println("[----------------------------------Zl] "+Zl);
+      System.out.println("[----------------------------------Zv] "+Zv);
+        return sols;
     }
 
     public Double [] calcKi (Double T, Double press) {
@@ -79,35 +86,35 @@ public class PengRobinson {
     }
 
 
-    public Double calcMolVol (Double T, Double press,Double [] xMol) throws ParseException {
+    public Double [] calcPi (Double T) {
 
-        props.setxMol(xMol);
-        Double Z = calcZc(T,press,xMol);
-        Double volume = (8.31*T*Z)/press;
-        System.out.print("--------------Molar volume (cm3/mol):----------- " + volume);
-        return volume;
-
+        return props.calcPi_sat(T);
     }
 
 
-    public Double[] calcfi (Double T, Double press,Double [] xMol) throws ParseException {
-       props.setxMol(xMol);
-       Double Zalfa = calcZc (T, press, xMol);
 
-       Double Vm = ((Zalfa*R*T)/press);// cm3/mol
+
+
+
+
+    public Double[] calcfi (Double T, Double press,Double [] xMol,Double Zalfa) throws ParseException {
+        props.setxMol(xMol);
+
+
+        Double Vm = ((Zalfa*R*T)/press);// cm3/mol
         System.out.println("----------------Molar volume: " + Vm);
         System.out.println("----------------Compress. factor : " + Zalfa);
-       double bm=props.coVolParam(xMol);
-       double aa = props.attractParam(T,xMol);
-       Double [] bi =  props.b_M();
+        double bm=props.coVolParam(xMol);
+        double aa = props.attractParam(T,xMol);
+        Double [] bi =  props.b_M();
         Double rad2=Math.sqrt(2);
 
-       Double sum =props.Am(T,xMol);
-       Double sum2 = props.AmRad(T,xMol);
+        Double sum =props.Am(T,xMol);
+        Double sum2 = props.AmRad(T,xMol);
 
-       Double [] ai = props.a_M(T);
-       Double [] aii = props.alfa_m(T);
-       Double [] fi = new Double[xMol.length];
+        Double [] ai = props.a_M(T);
+        Double [] aii = props.alfa_m(T);
+        Double [] fi = new Double[xMol.length];
         Double [] ffi = new Double[xMol.length];
         Double [] fug = new Double[xMol.length];
         Double [] fugPure = new Double[xMol.length];
@@ -115,40 +122,47 @@ public class PengRobinson {
         Double [] exponent =new Double[xMol.length];
         Double Bm = bm*press/(R*T);
         Double Am = aa*press/(R*R*T*T);
+        Double [] fi0 = new Double[xMol.length];
+        Double [] fPure = new Double[xMol.length];
+        Double [] Bi = new Double[xMol.length];
 
+        solver.printMat(props.getAij(T,press));
+        Double [] vecSum =props.getVecSum(xMol,props.getAij(T,press));
+        System.out.println("00000000000000---------------------------- VEC SUM   ");
+        solver.printArr(vecSum);
+        Double aSum = props.getSum(props.getAij(T,press),xMol);
         for (int i=0; i <xMol.length; i++ ){
-            ffi[i] =(bi[i]/bm)*(Zalfa-1)-Math.log(Zalfa-Bm)-(Am/(2*Math.sqrt(2))*Bm)*( (2.0/aa)*sum - bi[i]/bm)*Math.log((Zalfa+2.414*Bm)/(Zalfa-0.414*Bm));
-           System.out.println("Fugacity coeff in phase alfa: " +Math.exp(ffi[i]));
-           fug[i] = Math.exp(ffi[i]);
-       }
+            Bi[i] = press*bi[i]/(R*T);
 
-//       for (int i=0; i <xMol.length; i++ ){
-//
-//           fug[i] = (bi[i]/bm)*(Zalfa-1)-Math.log(Zalfa-Bm)-(Am/(2.0*rad2*Bm))*((2.0/aa)*sum-bi[i]/bm)*Math.log((Zalfa+2.414*Bm)/(Zalfa-0.414*Bm));
-//           System.out.println("fugacity in phase alfa-----: " +Math.exp(fug[i]));
-//    }
-////
-//    for (int i=0; i <xMol.length; i++ ){
-//         exponent[i] = (Math.log(Vm/(Vm-bm)) + bi[i]/(Vm-bm) + (2*sum/(R*T*bm))*( Math.log(Vm/(Vm+bm)))+ (bi[i]*aa/(R*T*bm*bm))*(Math.log((Vm+bm)/Vm)-bm/(Vm+bm))-Math.log(Zalfa/xMol[i]));
-//
-//        fi[i] = Math.exp(exponent[i]);
-//      //   System.out.println("Exponent (2): " + exponent[i]);
-//          System.out.println("fugacity in phase alfa(2): " + fi[i]);
-//     }
-//
-//        for (int i=0; i <xMol.length; i++ ){
-//           exponent[i] = Zalfa-1+Math.log(22400.0/(Vm-bm))+
-//                    ((bi[i]*aa -2*Math.sqrt(aa)*Math.sqrt(aii[i])*bm)/(2*rad2*R*T*bm*bm))*Math.log((Vm+bm+rad2*bm)/(Vm+bm-rad2*bm))+
-//           (bi[i]-bm)/(Vm-bm)+ ((bi[i]-bm)*aa*Vm)/(R*T*(2*bm*bm-Math.pow(Vm+bm,2)));
-//
-//
-//            fug[i] = Math.exp(exponent[i]);
-//
-//
-//            System.out.println("fugacity in phase alfa(3): " + fug[i]);
-//        }
+            ffi[i] =(Bi[i]/Bm)*(Zalfa-1.0)-Math.log(Zalfa-Bm)-
+                    (Am/(2.82*Bm))*( (2.0/Am)*vecSum[i] - Bi[i]/Bm)*Math.log((Zalfa+2.414*Bm)*Math.pow((Zalfa-0.414*Bm),-1.0));
+
+            fug[i] = Math.exp(ffi[i]);
+
+            System.out.println("Fugacity coeff in phase alfa: " +fug[i]);
+            System.out.println("Bi-----------------------------: " +Bi[i]);
+            System.out.println("Bm-----------------------------: " +Bm);
+            System.out.println("Am-----------------------------: " +(Am/(2*Math.sqrt(2))*Bm)*( (2.0/Am)*vecSum[i]-Bi[i]/Bm));
+        }
 
         return fug;
+
     }
 
+
+    public Double getZl() {
+        return Zl;
+    }
+
+    public Double getZv() {
+        return Zv;
+    }
+
+    public Double[] getFugL() {
+        return fugL;
+    }
+
+    public Double[] getFugV() {
+        return fugV;
+    }
 }

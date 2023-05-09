@@ -1,6 +1,7 @@
 package com.api.solver.propertyPackage;
 
 import com.api.solver.numerical.MathFunction;
+import com.api.solver.numerical.Solver;
 import org.nfunk.jep.ParseException;
 
 public class PropertyPackage {
@@ -48,6 +49,18 @@ public class PropertyPackage {
    return K_i;
     }
 
+
+    public Double[] calcPi_sat (Double temp) {
+        Double[] P_i = new Double[N_c];
+        Double [] acc = omega_i;
+        for (int i=0; i < N_c; i++) {
+
+            P_i[i] = Math.exp(Math.log(P_cr[i])+(7.0/3.0)*Math.log(10.0)*(1+omega_i[i])*(1-temp/T_cr[i]));
+
+        }
+        return P_i;
+    }
+
     public PropertyPackage(Double[] omega_i, Double[] t_cr, Double[] p_cr,Double[] xMol) throws ParseException {
         this.omega_i = omega_i;
         T_cr = t_cr;
@@ -69,6 +82,63 @@ public class PropertyPackage {
 
         return a;
 
+    }
+
+
+    public Double [][] getAij (Double T, Double p){
+        Double k = p/(T*T*R*R);
+        Double [][] Aij = new Double[N_c][N_c];
+        for (int i=0; i < N_c; i++) {
+            for (int j=0; j < N_c; j++) {
+                  Aij[i][j] = k *Math.sqrt(a_M(T)[i]*a_M(T)[j]);
+            }
+        }
+       return Aij;
+    }
+    Solver solver = new Solver();
+    public Double[] [] getAi (Double [][] mat, Double [] xMol){
+        Double [] [] result = new Double[xMol.length][xMol.length];
+
+        for (int j=0; j<xMol.length; j++) {
+            result[j] = solver.prodArr(xMol, mat[j]);
+        }
+
+        return result;
+    }
+
+    public Double getSum (Double [][] mat, Double []xMol){
+        Double sum = 0.0;
+
+        for (int i=0; i < N_c; i++) {
+            for (int j = 0; j < N_c; j++) {
+             sum = sum + xMol[j]*mat[i][j];
+
+            }
+        }
+        return sum;
+    }
+
+            public Double [] getVecSum(Double [] xMol, Double [][] mat){
+           Double[] xSum = new Double[xMol.length];
+           Double [][] newMat = new Double[xMol.length][xMol.length];
+           Double sum = 0.0;
+           for (int i=0; i< xMol.length; i++){
+             newMat[i] = solver.prodArr(xMol,mat[i]);
+           }
+                for (int i=0; i< xMol.length; i++){
+                    xSum[i] = sumMat(newMat[i]);
+                }
+
+           return xSum;
+            }
+
+    private Double sumMat(Double[] arr) {
+        Double sum=0.0;
+
+        for (int i=0; i < arr.length; i++){
+        sum=sum+arr[i];
+        }
+        return sum;
     }
 
     public Double Am (Double T, Double [] xMol){
@@ -220,6 +290,8 @@ public class PropertyPackage {
 
          return B;
      }
+
+
 
     public String PengRobinsonEq (Double press, Double temp, Double [] x_mol)  {
 
