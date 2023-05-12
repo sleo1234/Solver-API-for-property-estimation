@@ -48,7 +48,7 @@ public class SolverTests {
         xMol[2] = 0.25; //
 
         Double T = 400.0;
-        Double press = 2.0;
+        Double press = 3.0;
         int MAX_ITER=10;
 
         PengRobinson PR = new PengRobinson();
@@ -70,12 +70,12 @@ public class SolverTests {
 
 
         Double[] ki0 = PR.calcKi(T, press);
-        teta[0] = flash.solveVapFrac(ki0, xMol);
+        teta[0] = flash.solveVapFrac(ki0, xMol,0.5);
         for (int i = 0; i < N_c; i++) {
             K[0][i]=ki0[i];
 
             x[0][i] = xMol[i]/(1.0-(1.0-ki0[i])*teta[0]);
-            y[0][i] = ki0[i]*x[0][i];
+            y[0][i] =x[0][i]* ki0[i];
 
 
           //  System.out.println(" Initial K values: =========== ");
@@ -89,14 +89,11 @@ public class SolverTests {
         System.out.print("--------0000000000000000000000000000");
 
 
-        Double Z0L = PR.getZl();
-        Double Z0V = PR.getZv();
-       // FiL[0] = PR.calcfi(T,press,x[0],Z0L);
-        //FiV[0] = PR.calcfi(T,press,y[0],Z0V);
+
 
         for (int j = 0; j < MAX_ITER-1; j++) {
             solver.printArr(K[j]);
-            teta[j] = flash.solveVapFrac(K[j], xMol);
+            teta[j] = flash.solveVapFrac(K[j], xMol,0.5);
 
             System.out.println("===========================================(00001) k values: ");
             solver.printArr(K[0]);
@@ -112,7 +109,7 @@ public class SolverTests {
             PR.calcZc(T,press,x[j]);
 
             //ZiV[j] = PR.calcZc(T,press,y[j]);
-            y[j] = solver.prodArr(K[j], x[j]);
+            y[j] = solver.prodArr(x[j],K[j]);
             ZiV[j]=PR.calcZc(T,press,y[j]).get(0);
             PR.calcZc(T,press,y[j]);
             FiL[j] = PR.calcfi(T, press, x[j],ZiL[j]);
@@ -128,7 +125,8 @@ public class SolverTests {
             solver.printArr(ZiL);
             System.out.println("===========================================Zv values: ");
             solver.printArr(ZiV);
-            K[j+1] = solver.prodArr(solver.divArr(FiL[j], FiV[j]), K[j]);
+          //  K[j+1] = solver.prodArr(solver.divArr(FiL[j], FiV[j]), K[j]);
+            K[j+1]=solver.divArr(FiL[j],FiV[j]);
             solver.printArr(K[j]);
         }
 
@@ -155,7 +153,9 @@ public class SolverTests {
         solver.printMat(FiV);
         System.out.println("************************* END");
 
-
+        System.out.println("************************* K matrix ");
+        solver.printMat(K);
+        System.out.println("************************* END");
 
 
     }
@@ -247,7 +247,7 @@ public class SolverTests {
 
         Double Zl = PR.calcZc(T,press,xMol).get(0);
         Double [] FiL = PR.calcfi(T,Pinit,xMol,Zl);
-        Double Zv = PR.calcZc(T,press,xMol).get(1);
+        Double Zv = PR.calcZc(T,press,xMol).get(0);
         Double [] FiV = PR.calcfi(T,Pinit,yi,Zv);
 
         System.out.println("*Z***: "+ Zl +" ******Zv " + Zv);

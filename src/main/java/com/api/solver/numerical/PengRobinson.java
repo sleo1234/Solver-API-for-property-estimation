@@ -25,7 +25,7 @@ public class PengRobinson {
 
     }
 
-    Double R =8.31; //m3 * Pa / (mol * K)
+    Double R =8.3145; //m3 * Pa / (mol * K)
     public void setParams (Double [] omega_i, Double [] T_cr,  Double [] P_cr, Double[] xMol) throws ParseException {
         props = new PropertyPackage(omega_i,T_cr,P_cr,xMol);
 
@@ -130,19 +130,20 @@ public class PengRobinson {
         Double [] vecSum =props.getVecSum(xMol,props.getAij(T,press));
         System.out.println("00000000000000---------------------------- VEC SUM   ");
         solver.printArr(vecSum);
+
         Double aSum = props.getSum(props.getAij(T,press),xMol);
         for (int i=0; i <xMol.length; i++ ){
             Bi[i] = press*bi[i]/(R*T);
 
             ffi[i] =(Bi[i]/Bm)*(Zalfa-1.0)-Math.log(Zalfa-Bm)-
-                    (Am/(2.82*Bm))*( (2.0/Am)*vecSum[i] - Bi[i]/Bm)*Math.log((Zalfa+2.414*Bm)*Math.pow((Zalfa-0.414*Bm),-1.0));
+                    (Am/(2*rad2*Bm))*( (2.0/Am)*vecSum[i] - Bi[i]/Bm)*Math.log((Zalfa+(1+rad2)*Bm)/(Zalfa+(1-rad2)*Bm));
 
             fug[i] = Math.exp(ffi[i]);
 
             System.out.println("Fugacity coeff in phase alfa: " +fug[i]);
             System.out.println("Bi-----------------------------: " +Bi[i]);
             System.out.println("Bm-----------------------------: " +Bm);
-            System.out.println("Am-----------------------------: " +(Am/(2*Math.sqrt(2))*Bm)*( (2.0/Am)*vecSum[i]-Bi[i]/Bm));
+            System.out.println("Am-----------------------------: " +Math.log((Zalfa+2.414*Bm)*Math.pow((Zalfa-0.414*Bm),-1.0)));
         }
 
         return fug;
