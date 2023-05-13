@@ -52,11 +52,12 @@ public class PengRobinson {
 
 
         //props.calcKi(5.0,300.0);
-        String eqn = props.PengRobinsonEq(press,T,xMol);
+       // String eqn = props.PengRobinsonEq(press,T,xMol);
         //Double sol = solver.newtonRaphson(eqn,x0,error,maxIter);
-         sols = solver.findAllSol(eqn,-1.0,5.0,0.1);
-
+        // sols = solver.findAllSol(eqn,0.0,2.0,0.4);
+          sols=props.analyticaLPengRobinsonEq(press, T ,xMol);
         if(sols.size() == 1){
+            System.out.println("******************************************************** "+sols.get(0));
             System.out.println("********************************************************");
             System.out.println("********************************************************");
             System.out.println("*************** System is in one phase *****************");

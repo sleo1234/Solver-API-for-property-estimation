@@ -4,6 +4,9 @@ import com.api.solver.numerical.MathFunction;
 import com.api.solver.numerical.Solver;
 import org.nfunk.jep.ParseException;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class PropertyPackage {
 
 
@@ -306,6 +309,41 @@ System.out.println("======================================CoVolParam     "+coVol
           System.out.println("---- coeff1 " + coeff1 + " ---- coeff2 " + coeff2);
         System.out.println(exp);
        return exp;
+    }
+
+
+
+    public List<Double> analyticaLPengRobinsonEq (Double press, Double temp, Double [] x_mol)  {
+        List<Double> sols = new ArrayList<>();
+        
+
+        Double A = (attractParam (temp,x_mol) * press) / (R * R * temp * temp);
+        Double B = (coVolParam(x_mol) * press) /(R * temp);
+
+        Double C2 = B-1.0;
+        Double C1 = (A-3*B*B-2*B);
+        Double C0 =(B*B*B+B*B-A*B);
+        Double Q1 = C2*C1/6.0-C0/2.0-(C2*C2*C2)/27.0;
+        Double P1 = C2*C2/9.0-C1/3.0;
+        Double D = Q1*Q1-P1*P1*P1;
+  System.out.println("----- "+D);
+        if ( D >= 0.0){
+            Double sol1 =Math.pow( (Q1+Math.sqrt(D)),1.0/3.0)+Math.pow((Q1-Math.sqrt(D)),1.0/3.0)-C2/3.0;
+            sols.add(sol1);
+        }
+
+        else {
+            Double t1 = (Q1*Q1)/(P1*P1*P1);
+            Double t2 = (Math.sqrt(1-t1))/((Math.sqrt(t1)*(Q1/Math.abs(Q1))));
+            Double teta = Math.atan(t2);
+            Double sol1 = 2*Math.sqrt(P1)*Math.cos(teta/3.0)-C2/3.0;
+            Double sol2 = 2*Math.sqrt(P1)*Math.cos((teta+2*Math.PI)/3.0)-C2/3.0;
+            Double sol3 = 2*Math.sqrt(P1)*Math.cos((teta+4*Math.PI)/3.0)-C2/3.0;
+            sols.add(sol1);
+            sols.add(sol2);
+            sols.add(sol3);
+        }
+        return sols;
     }
 
 

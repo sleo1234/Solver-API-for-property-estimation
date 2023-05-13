@@ -16,7 +16,7 @@ import java.util.Set;
 public class SolverTests {
 
     @Test
-    public void testSolver() throws ParseException {
+    public void testIsothermalFlash() throws ParseException {
 
         int N_c = 3;
         PropertyPackage props = new PropertyPackage();
@@ -49,7 +49,7 @@ public class SolverTests {
 
         Double T = 400.0;
         Double press = 3.0;
-        int MAX_ITER=10;
+        int MAX_ITER=5;
 
         PengRobinson PR = new PengRobinson();
         PR.setParams(omega_i, T_cr, P_cr, xMol);
@@ -87,7 +87,7 @@ public class SolverTests {
         PR.calcZc(T,press,xMol);
 
         System.out.print("--------0000000000000000000000000000");
-
+        solver.printArr(K[0]);
 
 
 
@@ -162,23 +162,28 @@ public class SolverTests {
 
 
     @Test
-    public void testNumericalMethod() throws ParseException {
-        String eqn = "x^3-0.9586421759726231*x^2+0.16611443931647654*x-0.008722083960063482";
+    public void testBubblePointFlash() throws ParseException {
+        FlashCalculation flash = new FlashCalculation();
+  Double [] xMol = new Double[3];
 
-        Solver solver = new Solver();
-    PengRobinson PR = new PengRobinson();
-
-        int maxIter = 10000;
-        Double x0=1.0;
-        Double error = 0.0001;
-        Double [] xMol = new Double[3];
         xMol[0] = 0.5; //
         xMol[1] = 0.25;  //
         xMol[2] = 0.25; //
-    PR.calcfi(400.0,3.0,xMol,0.172);
-      //  Double sol = solver.nRaphson(eqn,x0,error,maxIter);
-    //   List<Double> sols = solver.findAllSol(eqn,0.0,10.0,0.01);
-        //sols.forEach(System.out :: println);
+        Double T = 400.0;
+        flash.bubblePoint(T,xMol);
+    }
+     @Test
+    public void testFlashTP() throws ParseException {
+        FlashCalculation flash = new FlashCalculation();
+        Double [] xMol = new Double[3];
+
+        xMol[0] = 0.5; //
+        xMol[1] = 0.25;  //
+        xMol[2] = 0.25; //
+        Double T = 400.0;
+        Double press = 3.0;
+
+        flash.flashTP(T,press,xMol);
     }
 
 
