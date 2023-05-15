@@ -327,15 +327,27 @@ System.out.println("======================================CoVolParam     "+coVol
         Double P1 = C2*C2/9.0-C1/3.0;
         Double D = Q1*Q1-P1*P1*P1;
   System.out.println("----- "+D);
+  Double teta = 0.0;
+
         if ( D >= 0.0){
-            Double sol1 =Math.pow( (Q1+Math.sqrt(D)),1.0/3.0)+Math.pow((Q1-Math.sqrt(D)),1.0/3.0)-C2/3.0;
+            Double sign1 = (Q1+Math.sqrt(D))/(Math.abs(Q1+Math.sqrt(D)));
+            Double sign2 = (Q1-Math.sqrt(D))/(Math.abs(Q1-Math.sqrt(D)));
+            Double sol1 =sign1*Math.pow( Math.abs((Q1+Math.sqrt(D))),1.0/3.0)+sign2*Math.pow(Math.abs((Q1-Math.sqrt(D))),1.0/3.0)-C2/3.0;
             sols.add(sol1);
+            System.out.println("----- "+ (Q1-Math.sqrt(D)));
         }
 
         else {
+
+
             Double t1 = (Q1*Q1)/(P1*P1*P1);
             Double t2 = (Math.sqrt(1-t1))/((Math.sqrt(t1)*(Q1/Math.abs(Q1))));
-            Double teta = Math.atan(t2);
+            if (Math.atan(t2) <0){
+                teta = Math.atan(t2)+Math.PI;
+            }
+            else {
+                teta = Math.atan(t2);
+            }
             Double sol1 = 2*Math.sqrt(P1)*Math.cos(teta/3.0)-C2/3.0;
             Double sol2 = 2*Math.sqrt(P1)*Math.cos((teta+2*Math.PI)/3.0)-C2/3.0;
             Double sol3 = 2*Math.sqrt(P1)*Math.cos((teta+4*Math.PI)/3.0)-C2/3.0;

@@ -213,7 +213,7 @@ System.out.println("----------++++++++++++++++++++++ K length"+N_c);
 
     public Double [][] flashTP(Double T, Double press, Double [] xMol) throws ParseException {
         setParams();
-        int MAX_ITER = 10;
+        int MAX_ITER = 15;
         int N_c = xMol.length;
 
         Double[][] K = new Double[MAX_ITER][N_c];

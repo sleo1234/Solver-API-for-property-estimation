@@ -56,6 +56,7 @@ public class PengRobinson {
         //Double sol = solver.newtonRaphson(eqn,x0,error,maxIter);
         // sols = solver.findAllSol(eqn,0.0,2.0,0.4);
           sols=props.analyticaLPengRobinsonEq(press, T ,xMol);
+          System.out.println("Solution --------------------------------- "+sols.get(0));
         if(sols.size() == 1){
             System.out.println("******************************************************** "+sols.get(0));
             System.out.println("********************************************************");
