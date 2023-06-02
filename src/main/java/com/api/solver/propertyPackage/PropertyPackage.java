@@ -58,10 +58,21 @@ public class PropertyPackage {
         Double [] acc = omega_i;
         for (int i=0; i < N_c; i++) {
 
-            P_i[i] = Math.exp(Math.log(P_cr[i])+(7.0/3.0)*Math.log(10.0)*(1+omega_i[i])*(1-temp/T_cr[i]));
+            P_i[i] = Math.exp(Math.log(P_cr[i])+(7.0/3.0)*Math.log(10.0)*(1+omega_i[i])*(1-T_cr[i]/temp));
 
         }
         return P_i;
+    }
+
+    public Double[] calcPi(Double[] A, Double [] B, Double [] C, Double T){
+        int N_c = A.length;
+
+        Double[] Pi = new Double[N_c];
+
+        for (int i=0; i < N_c; i++) {
+            Pi[i] = Math.exp(A[i]-B[i]/(T+C[i]))/7600.0;
+        }
+        return Pi;
     }
 
     public PropertyPackage(Double[] omega_i, Double[] t_cr, Double[] p_cr,Double[] xMol) throws ParseException {

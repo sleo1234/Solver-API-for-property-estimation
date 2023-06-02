@@ -52,9 +52,9 @@ public class PengRobinson {
 
 
         //props.calcKi(5.0,300.0);
-       // String eqn = props.PengRobinsonEq(press,T,xMol);
+       //String eqn = props.PengRobinsonEq(press,T,xMol);
         //Double sol = solver.newtonRaphson(eqn,x0,error,maxIter);
-        // sols = solver.findAllSol(eqn,0.0,2.0,0.4);
+         //sols = solver.findAllSol(eqn,0.0,2.0,0.4);
           sols=props.analyticaLPengRobinsonEq(press, T ,xMol);
           System.out.println("Solution --------------------------------- "+sols.get(0));
         if(sols.size() == 1){
@@ -93,6 +93,9 @@ public class PengRobinson {
         return props.calcPi_sat(T);
     }
 
+    public Double [] Antoine(Double [] A, Double [] B, Double [] C,Double T){
+        return props.calcPi(A,B,C,T);
+    }
 
 
 
