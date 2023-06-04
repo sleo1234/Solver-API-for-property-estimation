@@ -166,7 +166,7 @@ System.out.println("----------++++++++++++++++++++++ K length"+N_c);
 
     public Double bubblePoint(Double T, Double [] xMol) throws ParseException {
         setParams();
-         int MAX_ITER = 25;
+         int MAX_ITER = 15;
          int N_c = xMol.length;
 
         Double[][] K = new Double[MAX_ITER][N_c];
@@ -197,7 +197,7 @@ System.out.println("----------++++++++++++++++++++++ K length"+N_c);
         Double [] C = new Double[]{-25.16,-67.71,-39.94};
 
 
-        Double h=0.00001; //step for centered differenece approximation of derivative
+        Double h=0.0000001; //step for centered differenece approximation of derivative
 
       //  Double [] A = new Double[]{15.726,1872.46,-25.16};
       //  Double [] B = new Double[]{15.7972,3313.0,-67.71};
@@ -240,30 +240,34 @@ System.out.println("----------++++++++++++++++++++++ K length"+N_c);
            System.out.println("---------------------------------");
           solver.printArr(K[0]);
 
-        y[j] = solver.prodArr(K[j], xMol);
+                   y[j] = solver.prodArr(K[j], xMol);
+                  if (PR.calcZc(T, Pb[j], y[j]).size() >1) {
+                      ZiV[j] = PR.calcZc(T, Pb[j], y[j]).get(1);
+                  }
 
-                       ZiV[j] = PR.calcZc(T, Pb[j], y[j]).get(0);
+                  else{
+                      ZiV[j] = PR.calcZc(T, Pb[j], y[j]).get(0);
+                  }
+                   ZiLder1[j] = PR.calcZc(T, Pb[j]+h, xMol).get(0);
+                   ZiLder2[j] = PR.calcZc(T, Pb[j]-h, xMol).get(0);
 
-                       ZiLder1[j] = PR.calcZc(T, Pb[j]+h, xMol).get(0);
-                       ZiLder2[j] = PR.calcZc(T, Pb[j]-h, xMol).get(0);
 
+                   if (PR.calcZc(T, Pb[j]+h, y[j]).size() > 1) {
+                       ZiVder1[j] = PR.calcZc(T, Pb[j] + h, y[j]).get(1);
 
-                       if (PR.calcZc(T, Pb[j]+h, y[j]).size() > 1) {
-                           ZiVder1[j] = PR.calcZc(T, Pb[j] + h, y[j]).get(1);
+                   }
 
-                       }
+                   else{
+                       ZiVder1[j] = PR.calcZc(T, Pb[j] + h, y[j]).get(0);
+                   }
+                   if (PR.calcZc(T, Pb[j]-h, y[j]).size() > 1) {
+                       ZiVder2[j] = PR.calcZc(T, Pb[j] - h, y[j]).get(1);
 
-                       else{
-                           ZiVder1[j] = PR.calcZc(T, Pb[j] + h, y[j]).get(0);
-                       }
-                       if (PR.calcZc(T, Pb[j]-h, y[j]).size() > 1) {
-                           ZiVder2[j] = PR.calcZc(T, Pb[j] - h, y[j]).get(1);
+                   }
 
-                       }
-
-                       else{
-                           ZiVder2[j] = PR.calcZc(T, Pb[j] - h, y[j]).get(0);
-                       }
+                   else{
+                       ZiVder2[j] = PR.calcZc(T, Pb[j] - h, y[j]).get(0);
+                   }
 
 
                 FiL[j] = PR.calcfi(T, Pb[j], xMol, ZiL[j]);
@@ -276,11 +280,15 @@ System.out.println("----------++++++++++++++++++++++ K length"+N_c);
                FiLder2[j] = PR.calcfi(T, Pb[j]-h, xMol,  ZiLder2[j]);
                FiVder2[j] = PR.calcfi(T, Pb[j]-h, y[j], ZiVder2[j]);
 
-                K[j+1] = solver.divArr(FiL[j], FiV[j]);
-              Pb[j+1] = Pb[j] - (2*h*( 1-  vecSum(K[j],xMol) ))*Math.pow((vecSum(xMol,FiVder2[j])-vecSum(xMol,FiLder1[j])),-1);
+
+
+            Double  Fder = (vecSum(xMol,solver.divArr(FiLder2[j],FiVder2[j]))- vecSum(xMol,solver.divArr(FiLder1[j],FiVder1[j])))/(2.0*h);
+              Pb[j+1] = Pb[j] - (1.0-vecSum(K[j],xMol))/Fder;
 
 
 
+
+           K[j+1] = solver.divArr(FiL[j], FiV[j]);
            }
 
 
@@ -299,18 +307,10 @@ System.out.println("----------++++++++++++++++++++++ K length"+N_c);
         System.out.println("Pressure : ");
         solver.printArr(Pb);
         System.out.println("Estimated pressure******************************************************: " + Pinit);
-        solver.printArr(teta);
+
         return P[0];
 
     }
-   public Double checkSum (Double[] y){
-        int len = y.length;
-        Double sum = 0.0;
-        for (int i=0; i < len; i++){
-            sum = sum+y[i];
-        }
-        return sum;
-   }
 
   public Double vecSum (Double[] arr1, Double []arr2){
       int len = arr1.length;
