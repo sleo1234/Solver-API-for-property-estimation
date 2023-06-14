@@ -177,6 +177,8 @@ System.out.println("----------++++++++++++++++++++++ K length"+N_c);
 
          Double [] M = new Double []{44.0,58.0,72.0};
          Double Mmed =0.0;
+         Double bubblePress=0.0;
+         Double[] vapFrac = new Double[N_c];
 
         Double[][] K = new Double[MAX_ITER][N_c];
         Double[][] x = new Double[MAX_ITER][N_c];
@@ -208,7 +210,7 @@ System.out.println("----------++++++++++++++++++++++ K length"+N_c);
         Double [] C = new Double[]{-25.16,-67.71,-39.94};
 
 
-        Double h=1E-4; //step for centered differenece approximation of derivative
+        Double h=1E-6; //step for centered differenece approximation of derivative
 
       //  Double [] A = new Double[]{15.726,1872.46,-25.16};
       //  Double [] B = new Double[]{15.7972,3313.0,-67.71};
@@ -309,7 +311,16 @@ System.out.println("----------++++++++++++++++++++++ K length"+N_c);
               Pb[j+1] = Pb[j] - (1.0-vecSum(solver.divArr(FiL[j], FiV[j]),xMol))*Math.pow(Fder,-1.0);
 
 
+
+
            K[j+1] = solver.divArr(FiL[j], FiV[j]);
+           System.out.println("_----- error: " + (Pb[j+1] - Pb[j]));
+           if (Math.abs(Pb[j+1] - Pb[j]) < 1e-8 && sumOfVec(y[j+1]) >0.998) {
+            bubblePress=Pb[j+1];
+            vapFrac=y[j+1];
+               break;
+           }
+
            }
 
         System.out.println("Molar frac in vap. phase");
@@ -344,9 +355,13 @@ System.out.println("----------++++++++++++++++++++++ K length"+N_c);
         solver.printMat(K);
         System.out.println("Pressure : ");
         solver.printArr(Pb);
-        System.out.println("Estimated pressure******************************************************: " + Pinit);
 
-        return P[0];
+
+        System.out.println("Bubble point pressure : " + bubblePress+" MPa with vap frac: ");
+        solver.printArr(vapFrac);
+
+
+        return bubblePress;
 
     }
 
@@ -358,6 +373,16 @@ System.out.println("----------++++++++++++++++++++++ K length"+N_c);
       }
       return sum;
   }
+
+    public Double sumOfVec (Double[] arr){
+        int len = arr.length;
+        Double sum = 0.0;
+        for (int i=0; i < len; i++){
+            sum = sum+arr[i];
+        }
+        return sum;
+    }
+
 
     public Double[] normalize(Double[] vector){
       int len = vector.length;
