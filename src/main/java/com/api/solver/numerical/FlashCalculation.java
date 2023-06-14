@@ -11,7 +11,8 @@ public class FlashCalculation {
 
     Solver solver = new Solver();
     PengRobinson PR = new PengRobinson();
-
+    Double Pcm=0.0;
+    Double Tcm=0.0;
     public FlashCalculation() throws ParseException {
     }
 
@@ -47,6 +48,11 @@ public class FlashCalculation {
 
 
         PR.setParams(omega_i, T_cr, P_cr, xMol);
+
+        for (int i=0; i < N_c; i++){
+            Pcm = Pcm+xMol[i] * P_cr[i];
+            Tcm = Tcm+xMol[i] * T_cr[i];
+        }
 
     }
 
@@ -166,8 +172,11 @@ System.out.println("----------++++++++++++++++++++++ K length"+N_c);
 
     public Double bubblePoint(Double T, Double [] xMol) throws ParseException {
         setParams();
-         int MAX_ITER = 15;
+         int MAX_ITER = 25;
          int N_c = xMol.length;
+
+         Double [] M = new Double []{44.0,58.0,72.0};
+         Double Mmed =0.0;
 
         Double[][] K = new Double[MAX_ITER][N_c];
         Double[][] x = new Double[MAX_ITER][N_c];
@@ -183,6 +192,8 @@ System.out.println("----------++++++++++++++++++++++ K length"+N_c);
         Double[] ZiVder1 = new Double[MAX_ITER];
         Double[] ZiLder2 = new Double[MAX_ITER];
         Double[] ZiVder2 = new Double[MAX_ITER];
+        Double[] VmV = new Double[MAX_ITER];
+        Double[] VmL = new Double[MAX_ITER];
 
 
         Double [] ZiL = new Double[MAX_ITER];
@@ -197,7 +208,7 @@ System.out.println("----------++++++++++++++++++++++ K length"+N_c);
         Double [] C = new Double[]{-25.16,-67.71,-39.94};
 
 
-        Double h=0.0000001; //step for centered differenece approximation of derivative
+        Double h=1E-4; //step for centered differenece approximation of derivative
 
       //  Double [] A = new Double[]{15.726,1872.46,-25.16};
       //  Double [] B = new Double[]{15.7972,3313.0,-67.71};
@@ -209,16 +220,20 @@ System.out.println("----------++++++++++++++++++++++ K length"+N_c);
         Double[] sum = new Double[MAX_ITER];
         Double [] Pb = new Double[MAX_ITER];
 
+
+
         for (int i=0; i < N_c; i++){
 
             Pinit = Pinit +xMol[i]* Pi0[i];
+           Mmed = Mmed + xMol[i]*M[i];
 
         }
 
-        System.out.println("===================== " + Pinit);
-        Double[] ki0 = PR.calcKi(T, Pinit);
-        Pb[0]=Pinit;
 
+        Double[] ki0 = PR.calcKi(T, Pinit);
+        Pb[0]=1.036*Pcm*(T/Tcm);
+//1.036*Pcm*(T/Tcm);
+        System.out.println("===================== " + Pb[0]);
         for (int i=0; i < N_c; i++){
 
             y[0][i] = ki0[i] * xMol[i];
@@ -237,13 +252,17 @@ System.out.println("----------++++++++++++++++++++++ K length"+N_c);
 
 
             ZiL[j] = PR.calcZc(T, Pb[j], xMol).get(0);
-           System.out.println("---------------------------------");
-          solver.printArr(K[0]);
+           System.out.println("------------------------------00000---");
 
-                   y[j] = solver.prodArr(K[j], xMol);
+
+
+
+                   y[j+1] = (solver.prodArr(K[j], xMol));
                   if (PR.calcZc(T, Pb[j], y[j]).size() >1) {
                       ZiV[j] = PR.calcZc(T, Pb[j], y[j]).get(1);
                   }
+
+
 
                   else{
                       ZiV[j] = PR.calcZc(T, Pb[j], y[j]).get(0);
@@ -270,6 +289,9 @@ System.out.println("----------++++++++++++++++++++++ K length"+N_c);
                    }
 
 
+                     VmV[j] = 8.314*T*ZiV[j]/Pb[j];
+                     VmL[j] = 8.314*T*ZiL[j]/Pb[j];
+                 System.out.print("-----------------------------Liquid density (g/cm3): " + Mmed/VmL[j]);
                 FiL[j] = PR.calcfi(T, Pb[j], xMol, ZiL[j]);
                 FiV[j] = PR.calcfi(T, Pb[j], y[j], ZiV[j]);
 
@@ -283,27 +305,43 @@ System.out.println("----------++++++++++++++++++++++ K length"+N_c);
 
 
             Double  Fder = (vecSum(xMol,solver.divArr(FiLder2[j],FiVder2[j]))- vecSum(xMol,solver.divArr(FiLder1[j],FiVder1[j])))/(2.0*h);
-              Pb[j+1] = Pb[j] - (1.0-vecSum(K[j],xMol))/Fder;
 
-
+              Pb[j+1] = Pb[j] - (1.0-vecSum(solver.divArr(FiL[j], FiV[j]),xMol))*Math.pow(Fder,-1.0);
 
 
            K[j+1] = solver.divArr(FiL[j], FiV[j]);
            }
 
-
         System.out.println("Molar frac in vap. phase");
         solver.printMat(y);
 
-        System.out.println("Fugacities in liq phase");
+        System.out.println("Fugacities in liq. phase");
         solver.printMat(FiL);
 
-        System.out.println("Fugacities in liq phase");
+        System.out.println("Fugacities in vap. phase");
         solver.printMat(FiV);
+        System.out.println("FiVder1");
+        solver.printMat(FiVder1);
+        System.out.println("FiVder2");
+        solver.printMat(FiVder2);
+        System.out.println("FiLder1");
+        solver.printMat(FiLder1);
+        System.out.println("FiLder2");
+        solver.printMat(FiLder2);
         System.out.println("Zl in liq phase");
         solver.printArr(ZiL);
         System.out.println("ZV in vap phase");
         solver.printArr(ZiV);
+        System.out.println("ZiVder1");
+        solver.printArr(ZiVder1);
+        System.out.println("ZiVder2");
+        solver.printArr(ZiVder2);
+        System.out.println("ZiLder1");
+        solver.printArr(ZiLder1);
+        System.out.println("ZiJder2");
+        solver.printArr(ZiLder2);
+        System.out.println("K   ");
+        solver.printMat(K);
         System.out.println("Pressure : ");
         solver.printArr(Pb);
         System.out.println("Estimated pressure******************************************************: " + Pinit);
@@ -321,7 +359,27 @@ System.out.println("----------++++++++++++++++++++++ K length"+N_c);
       return sum;
   }
 
-   public boolean compareFval(Double[] Fl, Double[] Fv, Double err){
+    public Double[] normalize(Double[] vector){
+      int len = vector.length;
+      Double [] normvec=new Double[len];
+      Double sum = 0.0;
+
+      for (int i=0; i< len; i++){
+          sum = sum+vector[i];
+
+      }
+
+        for (int i=0; i< len; i++){
+          normvec[i] = vector[i]*(1/sum);
+
+        }
+
+
+        return normvec;
+    }
+
+
+    public boolean compareFval(Double[] Fl, Double[] Fv, Double err){
       int len = Fl.length;
 
        for (int i=0; i < len; i++){

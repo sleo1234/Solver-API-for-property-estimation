@@ -240,7 +240,7 @@ public class SolverTests {
         Double[] ki0 = PR.calcKi(T, Pinit);
         for (int i = 0; i < N_c; i++) {
 
-            yi[i] = ki0[i] * xMol[i];
+            yi[i] =  ki0[i] * xMol[i];
         }
         System.out.println("Estimated pressure: " + Pinit);
         solver.printArr(yi);
@@ -278,6 +278,19 @@ public class SolverTests {
         solver.printMat(solver.multMat(mat1, 2.0));
         Double[] result = solver.prodArr(arr1, arr2);
         solver.printArr(result);
+    }
+
+
+    @Test
+
+    public void testNormalization () throws ParseException {
+
+        Double [] vec = new Double [] {4.0,3.0,1.0};
+        FlashCalculation flash = new FlashCalculation();
+
+        Solver solver = new Solver();
+
+        solver.printArr(flash.normalize(vec));
     }
 
     @Test
