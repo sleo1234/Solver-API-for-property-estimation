@@ -166,8 +166,24 @@ public class SolverTests {
         xMol[1] = 0.25;  //
         xMol[2] = 0.25; //
         Double T = 400.0;
-        flash.bubblePoint(T, xMol);
+        flash.bubblePointBisect(T, xMol);
+       // flash.bubblePoint(T, xMol);
     }
+
+
+    @Test
+    public void testDewPointFlash() throws ParseException {
+        FlashCalculation flash = new FlashCalculation();
+        Double[] xMol = new Double[3];
+
+        xMol[0] = 0.5; //
+        xMol[1] = 0.25;  //
+        xMol[2] = 0.25; //
+        Double T = 380.0;
+        flash.dewPoint(T, xMol);
+    }
+
+
 
     @Test
     public void testFlashTP() throws ParseException {
@@ -182,6 +198,9 @@ public class SolverTests {
 
         flash.flashTP(T, press, xMol);
     }
+
+
+
 
 
     @Test
@@ -324,7 +343,7 @@ public class SolverTests {
         xMol[1] = 0.25;  //
         xMol[2] = 0.25; //
 
-        Double T = 400.0;
+        Double T = 500.0;
         Double press = 3.0;
         int MAX_ITER = 5;
 

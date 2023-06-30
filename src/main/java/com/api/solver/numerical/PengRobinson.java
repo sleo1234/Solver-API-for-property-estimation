@@ -156,6 +156,59 @@ public class PengRobinson {
     }
 
 
+    public Double[] calcDerFi (Double T, Double press,Double [] xMol,Double Zalfa) throws ParseException {
+        props.setxMol(xMol);
+
+
+        Double Vm = ((Zalfa*R*T)/press);// cm3/mol
+        System.out.println("----------------Molar volume: " + Vm);
+        System.out.println("----------------Compress. factor : " + Zalfa);
+        double bm=props.coVolParam(xMol);
+        double aa = props.attractParam(T,xMol);
+        Double [] bi =  props.b_M();
+        Double rad2=Math.sqrt(2);
+
+        Double sum =props.Am(T,xMol);
+        Double sum2 = props.AmRad(T,xMol);
+
+        Double [] ai = props.a_M(T);
+        Double [] aii = props.alfa_m(T);
+        Double [] fi = new Double[xMol.length];
+        Double [] ffi = new Double[xMol.length];
+        Double [] fug = new Double[xMol.length];
+        Double [] fugPure = new Double[xMol.length];
+        Double [] alfai = props.a_M(T);
+        Double [] exponent =new Double[xMol.length];
+        Double Bm = bm*press/(R*T);
+        Double Am = aa*press/(R*R*T*T);
+        Double [] fi0 = new Double[xMol.length];
+        Double [] fPure = new Double[xMol.length];
+        Double [] Bi = new Double[xMol.length];
+
+        solver.printMat(props.getAij(T,press));
+        Double [] vecSum =props.getVecSum(xMol,props.getAij(T,press));
+        System.out.println("00000000000000---------------------------- VEC SUM   ");
+        solver.printArr(vecSum);
+
+        Double aSum = props.getSum(props.getAij(T,press),xMol);
+        for (int i=0; i <xMol.length; i++ ){
+            Bi[i] = press*bi[i]/(R*T);
+
+            ffi[i] =(Bi[i]/Bm)*(Zalfa-1.0)-Math.log(Zalfa-Bm)-
+                    (Am/(2*rad2*Bm))*( (2.0/Am)*vecSum[i] - Bi[i]/Bm)*Math.log((Zalfa+(1+rad2)*Bm)/(Zalfa+(1-rad2)*Bm));
+
+            fug[i] = Math.exp(ffi[i]);
+
+            System.out.println("Fugacity coeff in phase alfa: " +fug[i]);
+            System.out.println("Bi-----------------------------: " +Bi[i]);
+            System.out.println("Bm-----------------------------: " +Bm);
+            System.out.println("Am-----------------------------: " +Math.log((Zalfa+2.414*Bm)*Math.pow((Zalfa-0.414*Bm),-1.0)));
+        }
+
+        return fug;
+
+    }
+
     public Double getZl() {
         return Zl;
     }

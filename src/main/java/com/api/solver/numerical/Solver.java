@@ -40,6 +40,22 @@ public class Solver {
                 return result;
         }
 
+    public Double [] add(Double [] arr, Double k){
+        Double [] result= new Double[arr.length];
+        for (int i=0; i < arr.length; i++){
+            result[i] =arr[i]+k;
+        }
+        return result;
+    }
+
+    public Double [] substract(Double [] arr1, Double [] arr2){
+        Double [] result= new Double[arr1.length];
+        for (int i=0; i < arr1.length; i++){
+            result[i] =arr1[i]-arr2[i];
+        }
+        return result;
+    }
+
         public Double [] prodArr(Double [] arr1, Double [] arr2){
             Double [] result= new Double[arr1.length];
 
