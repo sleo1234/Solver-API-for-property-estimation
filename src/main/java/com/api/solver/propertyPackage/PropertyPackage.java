@@ -316,7 +316,7 @@ public class PropertyPackage {
         double coeff2 = (A-2*B-3*B*B);
         double coeff3 =(A*B-B*B-B*B*B);
 System.out.println("======================================CoVolParam     "+coVolParam(x_mol));
-          String exp = "x^3-" + String.valueOf(coeff1)+ "*x^2+" + String.valueOf(coeff2)+"*x-"+coeff3;
+          String exp = "x^3-" + coeff1 + "*x^2+" + coeff2 +"*x-"+coeff3;
           System.out.println("---- coeff1 " + coeff1 + " ---- coeff2 " + coeff2);
         System.out.println(exp);
        return exp;
@@ -374,10 +374,10 @@ System.out.println("======================================CoVolParam     "+coVol
     public String solveForP (Double temp, Double press,Double[] x_mol){
 
 
-       String firstTerm = String.valueOf(press)+ "-" + String.valueOf(R*temp)+"/(x-"+String.valueOf(coVolParam(x_mol))+")";
+       String firstTerm = press + "-" + R * temp +"/(x-"+ coVolParam(x_mol) +")";
        //System.out.print("====="+firstTerm);
-       String secondTerm = String.valueOf(attractParam (temp,x_mol))+"/(x*(x+"+String.valueOf(coVolParam(x_mol))+")+"
-               +String.valueOf(coVolParam(x_mol))+"*(x-"+String.valueOf(coVolParam(x_mol))+"))";
+       String secondTerm = attractParam(temp, x_mol) +"/(x*(x+"+ coVolParam(x_mol) +")+"
+               + coVolParam(x_mol) +"*(x-"+ coVolParam(x_mol) +"))";
 
         String eqn = firstTerm+"-"+secondTerm;
         System.out.print("====="+eqn);
@@ -389,8 +389,8 @@ System.out.println("======================================CoVolParam     "+coVol
          String b = String.valueOf((coVolParam(x_mol)));
          Double bb = (coVolParam(x_mol));
          String alfa = String.valueOf(attractParam (temp,x_mol));
-        String firstTerm = String.valueOf(R*temp)+"/(x-"+b+")";
-        String secondTerm = alfa+"/(x^2+2*x*"+ b + "-"+String.valueOf(bb*bb)+")" ;
+        String firstTerm = R * temp +"/(x-"+b+")";
+        String secondTerm = alfa+"/(x^2+2*x*"+ b + "-"+ bb * bb +")" ;
         String eqn = firstTerm+"+"+secondTerm;
         System.out.print("====="+eqn);
 

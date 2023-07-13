@@ -166,8 +166,9 @@ public class SolverTests {
         xMol[1] = 0.25;  //
         xMol[2] = 0.25; //
         Double T = 400.0;
-        flash.bubblePointBisect(T, xMol);
-       // flash.bubblePoint(T, xMol);
+     flash.bubblePoint2(T, xMol);
+     //flash.bubblePoint(T, xMol);
+        flash.bubblePointBisect(T,xMol);
     }
 
 
@@ -176,10 +177,10 @@ public class SolverTests {
         FlashCalculation flash = new FlashCalculation();
         Double[] xMol = new Double[3];
 
-        xMol[0] = 0.5; //
-        xMol[1] = 0.25;  //
-        xMol[2] = 0.25; //
-        Double T = 380.0;
+        xMol[0] = 0.2; //
+        xMol[1] = 0.3;  //
+        xMol[2] = 0.5; //
+        Double T = 400.0;
         flash.dewPoint(T, xMol);
     }
 
@@ -193,7 +194,7 @@ public class SolverTests {
         xMol[0] = 0.5; //
         xMol[1] = 0.25;  //
         xMol[2] = 0.25; //
-        Double T = 400.0;
+        Double T = 450.0;
         Double press = 3.0;
 
         flash.flashTP(T, press, xMol);
@@ -295,7 +296,8 @@ public class SolverTests {
 
         solver.printArr(solver.divArr(mat1[0], arr1));
         solver.printMat(solver.multMat(mat1, 2.0));
-        Double[] result = solver.prodArr(arr1, arr2);
+        Double[] result = solver.substract(arr1,arr2);
+
         solver.printArr(result);
     }
 

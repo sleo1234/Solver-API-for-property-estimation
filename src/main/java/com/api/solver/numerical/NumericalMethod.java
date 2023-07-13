@@ -93,6 +93,6 @@ public class NumericalMethod {
     private boolean isConverged(){
 
 
-        return iter > maxIter ? false : true;
+        return iter <= maxIter;
     }
 }

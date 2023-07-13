@@ -66,7 +66,7 @@ public class FlashCalculation {
             eqn=eqn+params.get(i)+"+";
         }
         for (int i=0; i< N_c; i++) {
-            Nomij.add("(1+x*" + String.valueOf((ki[i] - 1)) + ")");
+            Nomij.add("(1+x*" + (ki[i] - 1) + ")");
         }
         String nom=joinElements(Nomij);
 
@@ -119,7 +119,7 @@ System.out.println("----------++++++++++++++++++++++ K length"+N_c);
 
         for (int i=0; i< N_c; i++){
 
-            Bij.add("(1+x*"+String.valueOf(ki[i]-1)+")");
+            Bij.add("(1+x*"+ (ki[i] - 1) +")");
 
         }
 
@@ -189,7 +189,8 @@ System.out.println("----------++++++++++++++++++++++ K length"+N_c);
         Double[][] FiVder1 = new Double[MAX_ITER][N_c];
         Double[][] FiLder2 = new Double[MAX_ITER][N_c];
         Double[][] FiVder2 = new Double[MAX_ITER][N_c];
-
+        Double [][] Fder = new Double[MAX_ITER][N_c];
+        Double [][] F = new Double[MAX_ITER][N_c];
         Double[] ZiLder1 = new Double[MAX_ITER];
         Double[] ZiVder1 = new Double[MAX_ITER];
         Double[] ZiLder2 = new Double[MAX_ITER];
@@ -210,7 +211,7 @@ System.out.println("----------++++++++++++++++++++++ K length"+N_c);
         Double [] C = new Double[]{-25.16,-67.71,-39.94};
 
 
-        Double h=1E-6; //step for centered differenece approximation of derivative
+        Double h=1.0E-12; //step for centered differenece approximation of derivative
 
       //  Double [] A = new Double[]{15.726,1872.46,-25.16};
       //  Double [] B = new Double[]{15.7972,3313.0,-67.71};
@@ -307,10 +308,22 @@ System.out.println("----------++++++++++++++++++++++ K length"+N_c);
 
 
 
-            Double  Fder = (vecSum(xMol,solver.divArr(FiLder2[j],FiVder2[j]))- vecSum(xMol,solver.divArr(FiLder1[j],FiVder1[j])))/(2.0*h);
 
 
-              Pb[j+1] = Pb[j] - (vecSum(solver.divArr(FiL[j], FiV[j]),xMol)-1.0)*Math.pow(Fder,-1.0);
+
+
+          Fder[j] = solver.prodArr(xMol,solver.prodScal(solver.substract(solver.divArr(FiLder1[j],FiVder1[j]),
+                  solver.divArr(FiLder2[j],FiVder2[j])),1.0/(2.0*h)));//Fder
+
+       F[j] = solver.add(solver.prodArr(solver.divArr(FiL[j],FiV[j]),xMol),-1.0);//F
+
+        //sumOfVec()
+
+
+             Pb[j+1] = Pb[j] -sumOfVec(F[j])/sumOfVec(Fder[j]);
+
+
+
               K[j+1] = solver.divArr(FiL[j], FiV[j]);
 
 
@@ -333,14 +346,18 @@ System.out.println("----------++++++++++++++++++++++ K length"+N_c);
 
         System.out.println("Fugacities in vap. phase");
         solver.printMat(FiV);
-        System.out.println("FiVder1");
-        solver.printMat(FiVder1);
-        System.out.println("FiVder2");
-        solver.printMat(FiVder2);
+        System.out.println("Fder");
+        solver.printMat(Fder);
+        System.out.println("F_");
+        solver.printMat(F);
         System.out.println("FiLder1");
         solver.printMat(FiLder1);
         System.out.println("FiLder2");
         solver.printMat(FiLder2);
+        System.out.println("FiVder1");
+        solver.printMat(FiVder1);
+        System.out.println("FiVder2");
+        solver.printMat(FiVder2);
         System.out.println("Zl in liq phase");
         solver.printArr(ZiL);
         System.out.println("ZV in vap phase");
@@ -399,6 +416,8 @@ System.out.println("----------++++++++++++++++++++++ K length"+N_c);
         Double[] VmV = new Double[MAX_ITER];
         Double[] VmL = new Double[MAX_ITER];
 
+        Double [][] Fder = new Double[MAX_ITER][N_c];
+        Double [][] F = new Double[MAX_ITER][N_c];
 
         Double [] ZiL = new Double[MAX_ITER];
         Double [] ZiV = new Double[MAX_ITER];
@@ -412,7 +431,7 @@ System.out.println("----------++++++++++++++++++++++ K length"+N_c);
         Double [] C = new Double[]{-25.16,-67.71,-39.94};
 
 
-        Double h=1E-3; //step for centered differenece approximation of derivative
+        Double h=1.0E-8; //step for centered differenece approximation of derivative
 
         //  Double [] A = new Double[]{15.726,1872.46,-25.16};
         //  Double [] B = new Double[]{15.7972,3313.0,-67.71};
@@ -446,6 +465,17 @@ System.out.println("----------++++++++++++++++++++++ K length"+N_c);
 
 
         }
+         ZiL[0] =PR.calcZc(T,Pb[0],xMol).get(0);
+        if (PR.calcZc(T,Pb[0],y[0]).size() > 1) {
+            ZiV[0] = PR.calcZc(T, Pb[0], y[0]).get(1);
+        }
+
+        else{
+            ZiV[0] = PR.calcZc(T, Pb[0], y[0]).get(0);
+        }
+
+        FiL[0]=PR.calcfi(T,Pb[0],xMol,ZiL[0]);
+        FiV[0]=PR.calcfi(T,Pb[0],y[0],ZiV[0]);
 
         for (int j = 0; j < MAX_ITER-1; j++) {
 
@@ -455,14 +485,14 @@ System.out.println("----------++++++++++++++++++++++ K length"+N_c);
 
             System.out.println("---" + Pinit);
 
-
+            y[j+1] = (solver.prodArr(K[j], xMol));
             ZiL[j] = PR.calcZc(T, Pb[j], xMol).get(0);
             System.out.println("------------------------------00000---");
 
 
 
 
-            y[j+1] = (solver.prodArr(K[j], xMol));
+
             if (PR.calcZc(T, Pb[j], y[j]).size() >1) {
                 ZiV[j] = PR.calcZc(T, Pb[j], y[j]).get(1);
             }
@@ -508,16 +538,29 @@ System.out.println("----------++++++++++++++++++++++ K length"+N_c);
             FiVder2[j] = PR.calcfi(T, Pb[j]-h, y[j], ZiVder2[j]);
 
 
-           FiLder[j] =solver.prodScal(solver.substract(FiLder1[j],FiLder2[j]),1.0/(2.0*h));
-           FiVder[j] = solver.prodScal(solver.substract(FiVder1[j],FiVder2[j]),1.0/(2.0*h));
+           FiLder[j] =solver.substract(FiLder1[j],FiLder2[j]);
+           FiVder[j] = solver.substract(FiVder1[j],FiVder2[j]);
 
-           Double Fder = sumOfVec(solver.substract(solver.prodArr(FiLder[j],FiV[j]),solver.prodArr(FiVder[j],FiL[j])));
-           Double F = sumOfVec(solver.prodArr(solver
-                   .add(solver.prodArr(xMol,
-                   solver.divArr(FiL[j],FiV[j])),-1.0),
-                   solver.prodArr(FiV[j],FiV[j])));
 
-             Pb[j+1] = Pb[j] - F/Fder;
+
+           Fder[j] =solver.divArr(solver.prodArr(xMol,
+                           solver.substract(solver.prodScal(solver.prodArr(FiLder[j],FiV[j]),1.0/(2.0*h)),solver.prodScal(solver.prodArr(FiVder[j],FiL[j]), 1.0/(2.0*h)))),
+                   solver.prodArr(FiV[j],FiV[j]));
+
+          F[j] = solver.prodArr(xMol,
+                   K[j]);
+
+
+           // Double [][] funDer = calcFder( FiL,  FiLder, FiV, FiVder, xMol);
+
+            System.out.print("================= FunDer: ");
+           // solver.printMat(funDer);
+
+            //Double [][] fun = calcF(K,xMol);
+            System.out.print("================= Fun: ");
+           // solver.printMat(fun);
+
+           Pb[j+1] = Pb[j] - (sumOfVec(F[j])-1.0)/sumOfVec(Fder[j]);
 
             K[j+1] = solver.divArr(FiL[j], FiV[j]);
 
@@ -543,8 +586,10 @@ System.out.println("----------++++++++++++++++++++++ K length"+N_c);
         solver.printMat(FiV);
         System.out.println("FiVder1");
         solver.printMat(FiVder1);
-        System.out.println("FiVder2");
-        solver.printMat(FiVder2);
+        System.out.println("F---------");
+        solver.printMat(F);
+        System.out.println("Fder---------");
+        solver.printMat(Fder);
         System.out.println("FiLder1");
         solver.printMat(FiLder1);
         System.out.println("FiLder2");
@@ -559,8 +604,8 @@ System.out.println("----------++++++++++++++++++++++ K length"+N_c);
         solver.printArr(ZiVder2);
         System.out.println("ZiLder1");
         solver.printArr(ZiLder1);
-        System.out.println("ZiJder2");
-        solver.printArr(ZiLder2);
+      //  System.out.println("F ----------");
+      //  solver.printArr(F);
         System.out.println("K   ");
         solver.printMat(K);
         System.out.println("Pressure : ");
@@ -577,13 +622,72 @@ System.out.println("----------++++++++++++++++++++++ K length"+N_c);
 
 
 
+    public static Double [][] calcFder (Double [][] FiL, Double [][] FiLDer, Double [][] FiV, Double [][] FiVDer, Double [] xMol){
+        int N_c = xMol.length;
+        int MAX_ITER = 25;
+        Double [][] xMat=new Double[MAX_ITER][N_c];
+
+        for (int j=0; j < MAX_ITER-1; j++){
+
+            xMat[j]=xMol;
+
+        }
+
+        Double [][] mat = new Double [MAX_ITER][N_c];
+        Double h = 1e-4;
+        //for (int j=0; j < MAX_ITER; j++){
+        // for (int i=0; i < N_c; i++){
+
+        for (int i=0; i < MAX_ITER-1; i++){
+
+            for (int j=0; j < N_c; j++){
+
+                mat[i][j] = xMat[i][j]*(FiLDer[i][j]*FiV[i][j]/(2*h)-FiVDer[i][j]*FiL[i][j]/(2*h))/(FiV[i][j]*FiV[i][j]);
+
+            }
+
+        }
+
+        return mat;
+    }
+
+
+
+    public static Double [][] calcF(Double[][] Ki, Double [] xMol){
+
+        int N_c = xMol.length;
+        int MAX_ITER = 25;
+        Double [][] xMat=new Double[MAX_ITER][N_c];
+
+        for (int j=0; j < MAX_ITER-1; j++){
+
+            xMat[j]=xMol;
+
+        }
+
+        Double [] F = new Double [MAX_ITER];
+        Double [][] mat = new Double [MAX_ITER][N_c];
+        Double h = 1e-4;
+
+        for (int i=0; i < MAX_ITER-1; i++){
+
+            for (int j=0; j < N_c; j++){
+
+                mat[i][j] = xMat[i][j]*Ki[i][j]-1.0;
+            }
+
+        }
+
+        return mat;
+    }
+
     public Double bubblePointBisect(Double T, Double [] xMol) throws ParseException {
 
         setParams();
         int MAX_ITER = 25;
         int N_c = xMol.length;
 
-Double sol =0.0;
+         Double sol =0.0;
 
       Double Pinit=1.036*Pcm*(T/Tcm);
         Double bubbleP=0.0;
@@ -592,7 +696,6 @@ Double sol =0.0;
         Double[][] Ka = new Double[MAX_ITER][N_c];
         Double[][] Kb = new Double[MAX_ITER][N_c];
         Double[][] Kab = new Double[MAX_ITER][N_c];
-
         Double[][] ya = new Double[MAX_ITER][N_c];
         Double[][] yb = new Double[MAX_ITER][N_c];
         Double[][] yab = new Double[MAX_ITER][N_c];
@@ -614,17 +717,17 @@ Double sol =0.0;
         Double[] sum = new Double[MAX_ITER];
         Double [] Pb = new Double[MAX_ITER];
 
-        Pb[0] = Pinit;
 
-        Double a =1.5;
-        Double b=6.0;
+
+        Double a =Pinit-2.0;
+        Double b=Pinit+1.5;
         sol =(a+b)/2;
 
         Double[] ki0a = PR.calcKi(T, a);
         Double[] ki0b = PR.calcKi(T, b);
         Double[] ki0ab = PR.calcKi(T, sol);
         //1.036*Pcm*(T/Tcm);
-        System.out.println("===================== " + Pb[0]);
+        System.out.println("===================== " + Pinit);
         for (int i=0; i < N_c; i++){
 
             ya[0][i] =xMol[i]*ki0a[i];
@@ -636,17 +739,16 @@ Double sol =0.0;
 
 
         }
-        //Double bubbleP=0.0;
 
 
-
+              yab[0]=normalize(solver.prodArr(xMol,ki0ab));
 
         for (int j = 0; j < MAX_ITER-1; j++) {
 
 
-            ya[j+1] = (solver.prodArr(Ka[j], xMol));
-            yb[j+1] = (solver.prodArr(Kb[j], xMol));
-            yab[j+1] = (solver.prodArr(Kab[j], xMol));
+            ya[j+1] =normalize (solver.prodArr(Ka[j], xMol));
+            yb[j+1] = normalize(solver.prodArr(Kb[j], xMol));
+            yab[j+1] = normalize(solver.prodArr(Kab[j], xMol));
 
         ZiLa[j] = PR.calcZc(T, a, xMol).get(0);
         ZiLb[j] = PR.calcZc(T, b, xMol).get(0);
@@ -707,16 +809,19 @@ Double sol =0.0;
             Kab[j+1] = solver.divArr(FiL[j], FiV[j]);
 
 
-
-                if (vecSum(solver.divArr(FiL[j], FiV[j]), xMol)-1.0  == 0.0 || (b-a)/2 < 0.001) {
+                if ((Math.abs(vecSum(solver.divArr(FiL[j], FiV[j]), xMol)-1.0)  <1e-4 && (b-a)/2 < 1e-4)  ) {
                     bubbleP = sol;
+                    Pb[j]=sol;
+                    System.out.println("***************************************************val+ "+ (vecSum(solver.divArr(FiL[j], FiV[j]), xMol)-1.0));
                     break;
                 }
-                if ((1.0 - vecSum(solver.divArr(FiL[j], FiV[j]), xMol)) * (1.0 - vecSum(solver.divArr(FiLa[j], FiVa[j]), xMol)) > 0) {
+                if (((vecSum(solver.divArr(FiL[j], FiV[j]), xMol))-1.0) * (vecSum(solver.divArr(FiLa[j], FiVa[j]), xMol)-1.0) > 0 ) {
                     a = sol;
+                    Pb[j]=sol;
                     System.out.println("***************************************************a "+ a);
                 } else {
                     b = sol;
+                    Pb[j]=sol;
 
                     System.out.println("=b " + b);
                 }
@@ -729,8 +834,8 @@ Double sol =0.0;
         solver.printMat(yab);
 
           System.out.println("****************** "+bubbleP);
-        System.out.println("eq constants");
-        solver.printArr(ZiV);
+        System.out.println("Pb");
+        solver.printArr(Pb);
         return sol;
     }
      public Double bubblePointMVNR(Double T, Double [] xMol) throws ParseException{
