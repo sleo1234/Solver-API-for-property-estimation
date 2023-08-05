@@ -13,11 +13,18 @@ public class FlashCalculation {
     PengRobinson PR = new PengRobinson();
     Double Pcm=0.0;
     Double Tcm=0.0;
+
+    Double [] vapComp;
+    Double [] liqComp;
+
+    Double vapFrac;
+
     public FlashCalculation() throws ParseException {
     }
 
-    public void setParams () throws ParseException {
-        int N_c =3;
+    public void setParams (Double [] Pc, Double [] Tc, Double [] omega) throws ParseException {
+        int N_c =Pc.length;
+
         PropertyPackage props = new PropertyPackage();
         Solver solver = new Solver();
         //props.setParams();
@@ -171,7 +178,7 @@ System.out.println("----------++++++++++++++++++++++ K length"+N_c);
 
 
     public Double bubblePoint(Double T, Double [] xMol) throws ParseException {
-        setParams();
+
          int MAX_ITER = 25;
          int N_c = xMol.length;
 
@@ -389,7 +396,7 @@ System.out.println("----------++++++++++++++++++++++ K length"+N_c);
 
 
     public Double bubblePoint2(Double T, Double [] xMol) throws ParseException {
-        setParams();
+
         int MAX_ITER = 25;
         int N_c = xMol.length;
 
@@ -683,7 +690,7 @@ System.out.println("----------++++++++++++++++++++++ K length"+N_c);
 
     public Double bubblePointBisect(Double T, Double [] xMol) throws ParseException {
 
-        setParams();
+
         int MAX_ITER = 25;
         int N_c = xMol.length;
 
@@ -840,7 +847,7 @@ System.out.println("----------++++++++++++++++++++++ K length"+N_c);
     }
      public Double bubblePointMVNR(Double T, Double [] xMol) throws ParseException{
 
-         setParams();
+
          int MAX_ITER = 25;
          int N_c = xMol.length;
 
@@ -913,7 +920,7 @@ System.out.println("----------++++++++++++++++++++++ K length"+N_c);
              return bubbleP;
      }
    public Double dewPoint(Double T, Double [] xMol) throws ParseException {
-        setParams();
+
         int MAX_ITER = 25;
         int N_c = xMol.length;
 
@@ -1168,8 +1175,8 @@ System.out.println("----------++++++++++++++++++++++ K length"+N_c);
        }
        return false;
    }
-    public Double [][] flashTP(Double T, Double press, Double [] xMol) throws ParseException {
-        setParams();
+    public Double [][] flashTP(Double T, Double press, Double[] xMol) throws ParseException {
+
         int MAX_ITER = 15;
         int N_c = xMol.length;
 
@@ -1247,11 +1254,11 @@ System.out.println("----------++++++++++++++++++++++ K length"+N_c);
             K[j+1]=solver.divArr(FiL[j],FiV[j]);
 
         }
-
-        solver.printMat(x);
         System.out.println("************************* Molar frac matrix liquid phase");
-        solver.printMat(y);
+        solver.printMat(x);
         System.out.println("************************* Molar frac matrix vapour phase");
+        solver.printMat(y);
+
         solver.printArr(teta);
 
 
@@ -1266,10 +1273,29 @@ System.out.println("----------++++++++++++++++++++++ K length"+N_c);
         solver.printMat(K);
         System.out.println("************************* END");
 
+
+        vapComp=y[MAX_ITER-1];
+        liqComp=x[MAX_ITER-1];
+        vapFrac=teta[0];
         System.out.println("===================      "+ teta[0]);
         return y;
     }
 
+
+    public Double[] getVapComp(){
+
+        return vapComp;
+    }
+
+    public Double[] getLiqComp(){
+
+        return liqComp;
+    }
+
+    public Double getVapFrac(){
+
+        return vapFrac;
+    }
 
 }
 
