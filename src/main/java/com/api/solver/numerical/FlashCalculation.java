@@ -1,6 +1,9 @@
 package com.api.solver.numerical;
 
+import com.api.solver.flashapi.ComponentResponseBody;
+import com.api.solver.flashapi.FlashTPBody;
 import com.api.solver.propertyPackage.PropertyPackage;
+import com.api.solver.util.ApiUtil;
 import org.nfunk.jep.ParseException;
 
 import java.util.ArrayList;
@@ -10,6 +13,8 @@ public class FlashCalculation {
 
 
     Solver solver = new Solver();
+
+    ApiUtil apiUtil = new ApiUtil();
     PengRobinson PR = new PengRobinson();
     Double Pcm=0.0;
     Double Tcm=0.0;
@@ -22,43 +27,21 @@ public class FlashCalculation {
     public FlashCalculation() throws ParseException {
     }
 
-    public void setParams (Double [] Pc, Double [] Tc, Double [] omega) throws ParseException {
+    public void setParams (Double [] omega, Double [] Tc, Double [] Pc, Double [] xMol) throws ParseException {
         int N_c =Pc.length;
 
         PropertyPackage props = new PropertyPackage();
         Solver solver = new Solver();
-        //props.setParams();
-        Double[] omega_i = new Double[N_c]; //0.153, 0.199,0.255
-        Double[] T_cr = new Double[N_c]; //K 369.8,425.2,469.7
-
-        Double[] P_cr = new Double[N_c]; //
 
 
-        Double[] xMol = new Double[N_c];
 
 
-        omega_i[0] = 0.153;
-        omega_i[1] = 0.199;
-        omega_i[2] = 0.251;
 
-        T_cr[0] = 369.8;
-        T_cr[1] = 425.2;
-        T_cr[2] = 469.7;
-
-        P_cr[0] = 4.25; //MPa
-        P_cr[1] = 3.8;
-        P_cr[2] = 3.37;
-
-        xMol[0] = 0.5; //
-        xMol[1] = 0.25;  //
-        xMol[2] = 0.25; //
-
-
-        PR.setParams(omega_i, T_cr, P_cr, xMol);
+        PR.setParams(omega, Tc, Pc, xMol);
 
         for (int i=0; i < N_c; i++){
-            Pcm = Pcm+xMol[i] * P_cr[i];
-            Tcm = Tcm+xMol[i] * T_cr[i];
+            Pcm = Pcm+xMol[i] * Pc[i];
+            Tcm = Tcm+xMol[i] * Tc[i];
         }
 
     }
@@ -1175,7 +1158,14 @@ System.out.println("----------++++++++++++++++++++++ K length"+N_c);
        }
        return false;
    }
-    public Double [][] flashTP(Double T, Double press, Double[] xMol) throws ParseException {
+    public Double [][] flashTP(Double T, Double press, Double[] xMol, ComponentResponseBody body) throws ParseException {
+
+
+        Double[] acc = apiUtil.toArray(body.getOmega());
+        Double[] Pc = apiUtil.toArray(body.getPc());
+        Double[] Tc = apiUtil.toArray(body.getTc());
+        setParams(acc,Tc,Pc,xMol);
+
 
         int MAX_ITER = 15;
         int N_c = xMol.length;

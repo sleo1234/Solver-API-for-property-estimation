@@ -11,13 +11,14 @@ import java.util.*;
 @AllArgsConstructor
 @Getter
 @Setter
+
 public class FlashTPBody {
 
     private List<String> names;
 
-    private List<Double> xMol;
+    private List<Double> xmol;
 
-    private Double T;
+    private Double t;
 
     private Double p;
 

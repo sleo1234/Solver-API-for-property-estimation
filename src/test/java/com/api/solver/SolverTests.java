@@ -1,5 +1,7 @@
 package com.api.solver;
 
+import com.api.solver.flashapi.ComponentResponseBody;
+import com.api.solver.flashapi.FlashTPBody;
 import com.api.solver.numerical.FlashCalculation;
 import com.api.solver.numerical.PengRobinson;
 import com.api.solver.numerical.Solver;
@@ -8,10 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.nfunk.jep.ParseException;
 import org.yaml.snakeyaml.nodes.SequenceNode;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class SolverTests {
 
@@ -193,7 +192,7 @@ public class SolverTests {
         int N_c = xMol.length;
 
         Double T = 400.0;
-        Double press = 2.6;
+        Double press = 3.2;
 
 
 
@@ -220,8 +219,15 @@ public class SolverTests {
         xMol[0] = 0.5; //
         xMol[1] = 0.25;  //
         xMol[2] = 0.25; //
-        flash.setParams(P_cr,T_cr,omega_i);
-        flash.flashTP(T, press, xMol);
+        flash.setParams(omega_i,T_cr,P_cr,xMol);
+
+        ComponentResponseBody body = new ComponentResponseBody();
+
+        body.setTc(Arrays.asList(T_cr));
+        body.setPc(Arrays.asList(P_cr));
+        body.setOmega(Arrays.asList(omega_i));
+
+        flash.flashTP(T, press, xMol,body);
     }
 
 
