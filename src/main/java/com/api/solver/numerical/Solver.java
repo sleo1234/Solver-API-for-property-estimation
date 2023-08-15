@@ -1,9 +1,12 @@
 package com.api.solver.numerical;
 
 import org.nfunk.jep.ParseException;
+import org.springframework.stereotype.Component;
 
 import java.util.*;
 
+
+@Component
 public class Solver {
 
     public Solver() throws ParseException {

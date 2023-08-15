@@ -1167,6 +1167,8 @@ System.out.println("----------++++++++++++++++++++++ K length"+N_c);
         setParams(acc,Tc,Pc,xMol);
 
 
+
+        System.out.println("----------------------line1171 "+(body.getOmega().get(0)));
         int MAX_ITER = 15;
         int N_c = xMol.length;
 
@@ -1264,10 +1266,11 @@ System.out.println("----------++++++++++++++++++++++ K length"+N_c);
         System.out.println("************************* END");
 
 
-        vapComp=y[MAX_ITER-1];
-        liqComp=x[MAX_ITER-1];
+        vapComp=y[MAX_ITER-2];
+        liqComp=x[MAX_ITER-2];
         vapFrac=teta[0];
-        System.out.println("===================      "+ teta[0]);
+        System.out.println("===================   line 1272   ");
+        solver.printArr(vapComp);
         return y;
     }
 
