@@ -7,6 +7,7 @@ import com.api.solver.flashapi.FlashTPResponse;
 import com.api.solver.numerical.FlashCalculation;
 import com.api.solver.service.APIClient;
 
+import com.api.solver.util.ApiUtil;
 import org.nfunk.jep.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
@@ -33,6 +34,10 @@ public class FlashTPRestController {
     private APIClient apiClient;
 
 
+
+    ApiUtil apiUtil = new ApiUtil();
+
+
     @PostMapping("/flash_tp")
     public ResponseEntity<FlashTPResponse> flashTP (@RequestBody FlashTPBody flashTPBody) throws ParseException, JsonProcessingException {
 
@@ -42,6 +47,7 @@ public class FlashTPRestController {
         Double[] Tc = new Double[len];
         Double[] Pc = new Double[len];
         Double[] acc = new Double[len];
+        Double [] x_init= new Double[len];
 
         List<String> names = flashTPBody.getNames();
 
@@ -57,9 +63,6 @@ public class FlashTPRestController {
         ComponentResponseBody responseApiClient = mapper.readValue(jsonReponse,
                 ComponentResponseBody.class);
 
-        System.out.println("-----------------------------------");
-        System.out.println(responseApiClient.toString());
-        // call api from comp db
         FlashCalculation flash = new FlashCalculation();
 
 
@@ -67,16 +70,13 @@ public class FlashTPRestController {
         List<Double> Tcr = responseApiClient.getTc();
         List<Double> omega = responseApiClient.getOmega();
 
-           //flash.setParams(responseApiClient.getPc(),responseApiClient.getTc(),responseApiClient.getOmega());
 
-            Double [] x_init= new Double[len];
 
-             for (int i=0; i < len ; i++){
-                 x_init[i] = flashTPBody.getXmol().get(i);
-                 Tc[i] = Tcr.get(i);
-                 Pc[i] = Pcr.get(i);
-                 acc[i] = omega.get(i);
-             }
+             x_init = apiUtil.toArray(flashTPBody.getXmol());
+             Tc = apiUtil.toArray(Tcr);
+             Pc = apiUtil.toArray(Pcr);
+             acc = apiUtil.toArray(omega);
+
         flash.setParams(acc,Tc,Pc,x_init);
         flash.flashTP(flashTPBody.getT(), flashTPBody.getP(), x_init,responseApiClient);
 
@@ -86,7 +86,7 @@ public class FlashTPRestController {
 
             Double [] x = flash.getVapComp();
             Double [] y = flash.getLiqComp();
-          Double vapFrac = flash.getVapFrac();
+            Double vapFrac = flash.getVapFrac();
         FlashTPResponse response  = new FlashTPResponse(x,y,vapFrac);
 
          return new ResponseEntity<>(response, HttpStatus.OK);
@@ -95,15 +95,16 @@ public class FlashTPRestController {
 
 
 
-    @GetMapping("/testFeign")
-    public ResponseEntity<Object> testFeignClient(@RequestParam("names") List<String> names){
+    @GetMapping("/all_components")
+    public List<String> testFeignClient(){
 
 
+      List<String> names = apiClient.getAllComponents();
 
 
-        ResponseEntity<Object> componentDbServiceResponse = apiClient.getPropertiesByName(names);
+      return names;
 
-        return new ResponseEntity<>(componentDbServiceResponse,HttpStatus.OK);
+
     }
 
 

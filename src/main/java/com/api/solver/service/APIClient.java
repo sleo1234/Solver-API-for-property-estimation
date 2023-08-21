@@ -19,6 +19,9 @@ public interface APIClient {
     ResponseEntity<Object> getPropertiesByName(@RequestParam("names") List<String> names);
 
 
+    @GetMapping("/api/all_components")
+
+    List<String> getAllComponents ();
 
 
 }

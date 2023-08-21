@@ -16,6 +16,8 @@ public class FlashCalculation {
 
     ApiUtil apiUtil = new ApiUtil();
     PengRobinson PR = new PengRobinson();
+
+    MathFunction math = new MathFunction();
     Double Pcm=0.0;
     Double Tcm=0.0;
 
@@ -134,6 +136,14 @@ System.out.println("----------++++++++++++++++++++++ K length"+N_c);
         int maxIter = 1000;
         System.out.print("Vap frac: ---------------------------------------------------- "+ solver.nRaphson(eqn,x0,error,maxIter));
         return solver.nRaphson(eqn,x0,error,maxIter);
+    }
+
+
+    public Double evalRachfordRice (Double [] ki, Double [] xMol, Double val) throws ParseException {
+
+        String eqn = flashEquation(ki,xMol);
+        Double result = math.evalFun(eqn,val);
+       return result;
     }
 
 
@@ -1167,8 +1177,6 @@ System.out.println("----------++++++++++++++++++++++ K length"+N_c);
         setParams(acc,Tc,Pc,xMol);
 
 
-
-        System.out.println("----------------------line1171 "+(body.getOmega().get(0)));
         int MAX_ITER = 15;
         int N_c = xMol.length;
 
@@ -1185,6 +1193,8 @@ System.out.println("----------++++++++++++++++++++++ K length"+N_c);
 
 
         Double[] ki0 = PR.calcKi(T, press);
+        Double val = evalRachfordRice(ki0,xMol,0.0);
+        System.out.println("-------line 1199 " + val);
         teta[0] = solveVapFrac(ki0, xMol,0.5);
         for (int i = 0; i < N_c; i++) {
             K[0][i]=ki0[i];
@@ -1204,14 +1214,26 @@ System.out.println("----------++++++++++++++++++++++ K length"+N_c);
         System.out.print("--------0000000000000000000000000000");
         solver.printArr(K[0]);
 
+        List<Double> compressibility = PR.calcZc(T, press, xMol);
+        int sols = compressibility.size();
+
+        if (sols > 1){
+            System.out.println("===========================================(Line 1221 " + compressibility.get(0));
+            System.out.println("===========================================(Line 1222 " + compressibility.get(1));
+        }
+
+        else{
+            System.out.println("===========================================(Line 1226 " + compressibility.get(0));
+        }
 
 
         for (int j = 0; j < MAX_ITER-1; j++) {
             solver.printArr(K[j]);
-            teta[j] = solveVapFrac(K[j], xMol,0.0);
+            teta[j] = solveVapFrac(K[j], xMol, 0.0);
 
             System.out.println("===========================================(00001) k values: ");
             solver.printArr(K[0]);
+
 
             Double[] diff = solver.substract(K[j],1.0);
             Double [] product = solver.prodScal(diff,teta[j]);
@@ -1268,7 +1290,7 @@ System.out.println("----------++++++++++++++++++++++ K length"+N_c);
 
         vapComp=y[MAX_ITER-2];
         liqComp=x[MAX_ITER-2];
-        vapFrac=teta[0];
+        vapFrac=teta[MAX_ITER-2];
         System.out.println("===================   line 1272   ");
         solver.printArr(vapComp);
         return y;
