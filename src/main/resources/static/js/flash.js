@@ -1,9 +1,12 @@
 $(document).ready(function(){
 
 let components =[];
+let selectedComponents=[];
 
 getComponents()
 autoComplete()
+selectComponents()
+
 }
 )
 
@@ -20,17 +23,8 @@ function getComponents() {
              url: url,
              async: false
              }).done(function (data){});
-
-//  var names = data.responseJSON;
-    //alert(data.responseJSON)
-
-       console.log(data);
         let len = data.responseJSON.length;
         components = data.responseJSON.map(components => components);
-      //  alert(components);
-    for (i=0; i < len; i++){
-
-    }
     return data.responseJSON;
 
 }
@@ -46,3 +40,17 @@ function getComponents() {
          $("#names").autocomplete({source: names});
 
        }
+
+       function selectComponents(){
+
+       var selected=[];
+
+       $("#addButton").on("click", function(){
+
+        var name = $("input[name='Search component']").val();
+        selected.push(name);
+
+       });
+       selectedComponents = [...selected];
+        alert(selectedComponents);
+        }
