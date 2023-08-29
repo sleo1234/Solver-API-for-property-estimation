@@ -3,8 +3,15 @@ $(document).ready(function(){
 let components =[];
 let selectedComponents=[];
 
+
+//getComponents()
+//autoComplete()
+
+$("#names").on("click", function(){
 getComponents()
 autoComplete()
+
+})
 selectComponents()
 
 }
@@ -44,19 +51,26 @@ function getComponents() {
        function selectComponents(){
 
        var selected=[];
-       var counter =0;
+
        $("#addButton").on("click", function(){
        table = $("#myTable");
         var name = $("input[name='Search component']").val();
+
         selected.push(name);
-        counter++;
-        table.append('<tr id="row"' +string.valueOf(counter)+'><td>'+name+'</td ><td contenteditable="true"></td><td><span class="table-remove"><button type="button" id ="removeButton" class="btn btn-danger btn-rounded btn-sm my-0"> Remove </button></span></td></tr>');
 
 
-      $("#removeButton").on("click", function(){
 
-                          document.getElementById("row"+string.valueOf(counter)).remove();
-                              console.log(document.getElementById("myTable"));
+
+       var counter = $('#myTable >tbody >tr').length;
+        table.append('<tr id='+counter+'><td>'+name+'</td ><td contenteditable="true"></td><td><span class="table-remove"><button type="button" id ="removeButton'+counter+'" class="btn btn-danger btn-rounded btn-sm my-0"> Remove </button></span></td></tr>');
+
+
+          console.log(counter);
+
+      $("#removeButton"+counter).on("click", function(){
+
+                          document.getElementById(counter).remove();
+
                  })
 
        });
