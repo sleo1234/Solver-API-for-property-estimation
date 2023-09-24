@@ -5,19 +5,21 @@ let selectedComponents=[];
 
 getComponents()
 
-table = $("#myTable");
+//
+
 console.log(components)
 
 selectComponents()
 
 autoComplete(compSet)
-}
-)
-
-
+getTableData()
+})
 
 let selected = new Set()
 let compSet = new Set()
+jsTable =new DataTable("#myTable")
+let moleFrac = new Set();
+
 
 function getComponents() {
 
@@ -35,79 +37,72 @@ function getComponents() {
     return data.responseJSON;
 }
 
-
-
-
-
-
         function autoComplete(val){
-
           if (Object.prototype.toString.call(val) === '[object Set]'){
             $("#names").autocomplete({source: Array.from(val)});
             }
-
-         else {
-         $("#names").autocomplete({source: val});
-         }
-       }
+             else {
+             $("#names").autocomplete({source: val});
+             }
+           }
 
        function selectComponents(){
-
-
        $("#addButton").on("click", function(){
-
-
-
-        var name = $("input[name='Search component']").val();
-
-          var array = Array.from(selected)
-        const iterator = selected.entries();
-
-        addDataToTable("myTable", name)
-        selected.add(name)
+        var name = $("input[name='Search component']").text();
+       addDataToTable("myTable", name)
+       addNewRow(name)
+       //getTableData()
+       console.log(moleFrac)
+       $("input[name='Search component']").val('')
         compSet.delete(name)
+        autoComplete(compSet)
+        })
+       console.log(moleFrac)
+       }
 
-               autoComplete(compSet)
-        console.log(selected)
 
-          })
-           }
 
         function getTableData(){
 
-         var table = document.getElementById("myTable");
-         console.log(table.length);
-          for (var i = 0; i < table.length; i++) {
+          jsTable =new DataTable("#myTable")
+             console.log(jsTable)
+            jsTable.each(function(){
+            moleFrac.add(self.find("td:eq(1)").text())
+            console.log("-------")
+            console.log(self.find("td:eq(1)").text())
+             console.log("-------")
+            })
 
-      console.log(table.rows.item(i).cells)
-          }
-        }
+}
 
-        function removeElementByName( array, name){
-        var result=[];
-        for (var i=0; i < array.length; i++){
 
-                if (array[i] == name){
-                 array.splice(i,1)
-                }
-            }
-            result=[...array]
-            return result
-        }
 
                function addDataToTable(tableId, rowName){
               var counter = $('#' + tableId+ ' >tbody >tr').length;
 
-                table.append('<tr id='+counter+'><td>'+rowName+'</td ><td contenteditable="true"></td><td><span class="table-remove"><button type="button" id ="removeButton'+counter+'" class="btn btn-danger btn-rounded btn-sm my-0"> Remove </button></span></td></tr>');
+                table.append('<tr id='+counter+'><td>'+rowName+'</td ><td id="moleFrac"'+counter+' contenteditable="true"></td><td><span class="table-remove"><button type="button" id ="removeButton'+counter+'" class="btn btn-danger btn-rounded btn-sm my-0"> Remove </button></span></td></tr>');
+                console.log(table)
+
+
+                //let jsTable = new DataTable("#myTable");
+                 //moleFrac.add(table.DataTable().rows(counter))
                 $("#removeButton"+counter).on("click", function(){
-
-                console.log("added "+ rowName)
                     document.getElementById(counter).remove();
-                    //compSet.add(rowName)
-                   // console.log(compSet)
+                    compSet.add(rowName)
                     autoComplete(compSet)
-              selected.delete(rowName)
 
+                    selected.delete(rowName)
                          })
+              }
 
-        }
+
+
+              function addNewRow(compName) {
+              jsTable.row.add([
+                  name
+              ]).draw(false)
+              }
+
+
+
+
