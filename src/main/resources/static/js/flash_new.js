@@ -4,9 +4,10 @@ let compSet = new Set()
 
 $(document).ready(function() {
     // Initialize DataTable
-
+    var messsage ="";
     getComponents()
-
+    var addedComponents = new Set();
+    var moleFrac =[];
 
     const table = $('#dataTable').DataTable();
 
@@ -14,16 +15,31 @@ $(document).ready(function() {
 
 $('#addButton').on('click', function() {
         const name = $("input[name='Search component']").val();
-
+       var newRow ='';
         // Check if name is not empty
 
 
-            // Add a new row to the DataTable
-            const newRow = table.row.add([name, '', '<td><span class="removeRow"><button type="button" id ="removeButton" class="btn btn-danger btn-rounded btn-sm my-0"> Remove </button></span></td>']).draw().node();
-            compSet.delete(name)
-             console.log(compSet)
-              autoComplete(compSet)
 
+             if (compSet.has(name)){
+            // Add a new row to the DataTable
+            newRow = table.row.add([name, '', '<td><span class="removeRow"><button type="button" id ="removeButton" class="btn btn-danger btn-rounded btn-sm my-0"> Remove </button></span></td>']).draw().node();
+            compSet.delete(name)
+            addedComponents.add(name);
+            console.log(addedComponents)
+              autoComplete(compSet)
+             }
+
+              else if (addedComponents.has(name)){
+              message ="Component already added"
+              alert(message);
+              }
+             else  {
+                       message ="Component not found in the database/not a valid component"
+                        $("input[name='Search component']").val('')
+                       alert(message)
+                       }
+                console.log("here")
+                //  getDataFromTable(table)
             // Add a click event for the "Remove" button
             $(newRow).find('.removeRow').on('click', function() {
             $("input[name='Search component']").val('')
@@ -46,11 +62,27 @@ $('#addButton').on('click', function() {
             // Handle Mole frac input changes
             moleFracInput.on('blur', function() {
                 const moleFracValue = $(this).val();
+               const closestName = $(this).closest('tr')
+                const addedName = closestName.find('td:eq(0)').text();
 
-                if (moleFracValue != 0){
+              // const row = table.rows().nodes().to$().filter(function() {
+                   //   return $(this).find('td:eq(0)').text() === addedName;
+                //  });
+                var moleFractionByName = getMoleFracByName(addedName)
+
+              //  addedMoleFrac = row.find('td:eq(1)').val();
+
+                //console.log(addedMoleFrac)
+             //   if (moleFracValue !='' && !addedComponents.has(addedName)){
+                moleFrac.push(moleFracValue)
+               // }
+                console.log("----------")
+                console.log(moleFractionByName)
+               // if (moleFracValue != 0 && !addedComponents.has(addedName)){
                 // Add the Name and Mole frac values to an array
-                addToDataArray(name, moleFracValue);
-                }
+
+              //  addToDataArray(name, moleFracValue);
+                //}
             });
 
     });
@@ -59,7 +91,10 @@ $('#addButton').on('click', function() {
 
     // Function to add values to the data array
     function addToDataArray(name, moleFracValue) {
+      console.log(addedComponents)
+        // if (!addedComponents.has(name)){
         dataArray.push({ name, moleFracValue });
+        //}
         console.log(dataArray); // You can replace this with your desired action
     }
 
@@ -68,6 +103,7 @@ $('#addButton').on('click', function() {
         // Remove the row from the DataTable
         table.row(rowToRemove).remove().draw();
         compSet.add(nameToRemove)
+        addedComponents.delete(nameToRemove);
          autoComplete(compSet)
         // Remove the corresponding data from the dataArray
         const indexToRemove = dataArray.findIndex(item => item.name === nameToRemove);
@@ -76,6 +112,11 @@ $('#addButton').on('click', function() {
             console.log(dataArray); // Updated dataArray after removal
         }
     }
+
+
+
+
+
 })
 
 function getComponents() {
@@ -103,4 +144,22 @@ function getComponents() {
              }
            }
 
+function getMoleFracByName(nameToFind) {
+    // Assuming you have initialized the DataTable with an ID like "dataTable"
+    const table = $('#dataTable').DataTable();
+
+    // Search for the row containing the specified Name
+    const row = table.rows().nodes().to$().filter(function() {
+        return $(this).find('td:eq(0)').text() === nameToFind;
+    });
+
+    if (row.length > 0) {
+        // Get the Mole frac value from the corresponding row
+        const moleFrac = row.find('td:eq(1)').text();
+        return moleFrac;
+    } else {
+        // Return a message or value indicating that the Name was not found
+        return "Name not found";
+    }
+}
 
