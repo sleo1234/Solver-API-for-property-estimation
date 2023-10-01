@@ -8,23 +8,25 @@ $(document).ready(function() {
     getComponents()
     var addedComponents = new Set();
     var moleFrac =[];
-
+      var valuesArray=[];
     const table = $('#dataTable').DataTable();
 
      autoComplete(compSet)
-
+  var index =1;
 $('#addButton').on('click', function() {
         const name = $("input[name='Search component']").val();
        var newRow ='';
+
         // Check if name is not empty
 
 
 
              if (compSet.has(name)){
             // Add a new row to the DataTable
-            newRow = table.row.add([name, '', '<td><span class="removeRow"><button type="button" id ="removeButton" class="btn btn-danger btn-rounded btn-sm my-0"> Remove </button></span></td>']).draw().node();
+            newRow = table.row.add([index,name, '', '<td><span class="removeRow"><button type="button" id ="removeButton" class="btn btn-danger btn-rounded btn-sm my-0" onclick=deleteElementAtIndexInAllArrays(valuesArray,this-1)> Remove </button></span></td>']).draw().node();
             compSet.delete(name)
             addedComponents.add(name);
+            index++;
             console.log(addedComponents)
               autoComplete(compSet)
              }
@@ -43,15 +45,18 @@ $('#addButton').on('click', function() {
             // Add a click event for the "Remove" button
             $(newRow).find('.removeRow').on('click', function() {
             $("input[name='Search component']").val('')
+
                 // Get the corresponding row and remove it
                 const rowToRemove = $(this).closest('tr');
-                const nameToRemove = rowToRemove.find('td:eq(0)').text();
+
+                const nameToRemove = rowToRemove.find('td:eq(1)').text();
                 removeRow(rowToRemove, nameToRemove);
+                console.log("name to emove: " +nameToRemove)
             });
 
             // Add an input field for Mole frac (make it editable)
-            const moleFracInput = $('<input type="text" class="moleFracInput" placeholder="Mole frac">');
-            $(newRow).find('td:eq(1)').html(moleFracInput);
+            const moleFracInput = $('<input type="number" data-prev-value="" class="moleFracInput" placeholder="Mole frac" onchange=updateValue(this)>');
+            $(newRow).find('td:eq(2)').html(moleFracInput);
 
             // Clear the search input
             $("input[name='Search component']").val('')
@@ -60,33 +65,27 @@ $('#addButton').on('click', function() {
             moleFracInput.focus();
 
             // Handle Mole frac input changes
-            moleFracInput.on('blur', function() {
+            moleFracInput.on('change',function() {
                 const moleFracValue = $(this).val();
                const closestName = $(this).closest('tr')
-                const addedName = closestName.find('td:eq(0)').text();
+               const currentIndex = closestName.find('td:eq(0)').text();
+               console.log("current index: " + currentIndex)
+                const addedName = closestName.find('td:eq(1)').text();
+                const addedMoleFrac = closestName.find('td:eq(2)').val();
+                console.log("current name: " + addedName)
 
-              // const row = table.rows().nodes().to$().filter(function() {
-                   //   return $(this).find('td:eq(0)').text() === addedName;
-                //  });
-                var moleFractionByName = getMoleFracByName(addedName)
-
-              //  addedMoleFrac = row.find('td:eq(1)').val();
-
-                //console.log(addedMoleFrac)
-             //   if (moleFracValue !='' && !addedComponents.has(addedName)){
                 moleFrac.push(moleFracValue)
-               // }
-                console.log("----------")
-                console.log(moleFractionByName)
-               // if (moleFracValue != 0 && !addedComponents.has(addedName)){
-                // Add the Name and Mole frac values to an array
 
-              //  addToDataArray(name, moleFracValue);
-                //}
+                console.log("----------")
+                 console.log(moleFrac)
+
+
             });
 
+
+
     });
-    // Data array to store Name and Mole frac values
+
     const dataArray = [];
 
     // Function to add values to the data array
@@ -105,6 +104,7 @@ $('#addButton').on('click', function() {
         compSet.add(nameToRemove)
         addedComponents.delete(nameToRemove);
          autoComplete(compSet)
+       deleteElementAtIndexInAllArrays(valuesArray, rowToRemove-1)
         // Remove the corresponding data from the dataArray
         const indexToRemove = dataArray.findIndex(item => item.name === nameToRemove);
         if (indexToRemove !== -1) {
@@ -112,6 +112,7 @@ $('#addButton').on('click', function() {
             console.log(dataArray); // Updated dataArray after removal
         }
     }
+
 
 
 
@@ -144,22 +145,94 @@ function getComponents() {
              }
            }
 
-function getMoleFracByName(nameToFind) {
-    // Assuming you have initialized the DataTable with an ID like "dataTable"
-    const table = $('#dataTable').DataTable();
+function pushValue(value){
+   var arr=[];
 
-    // Search for the row containing the specified Name
-    const row = table.rows().nodes().to$().filter(function() {
-        return $(this).find('td:eq(0)').text() === nameToFind;
-    });
-
-    if (row.length > 0) {
-        // Get the Mole frac value from the corresponding row
-        const moleFrac = row.find('td:eq(1)').text();
-        return moleFrac;
-    } else {
-        // Return a message or value indicating that the Name was not found
-        return "Name not found";
-    }
+   return arr.push([value])
 }
+            var indexes=[];
+            var frac=[];
+    function updateValue(input){
+
+
+          const rowIndex =  input.closest("tr").rowIndex - 1
+
+
+            const newValue = input.value;
+            //indexes.push(rowIndex)
+            const prevValue = input.getAttribute("data-prev-value");
+            indexes.push(rowIndex)
+
+             console.log("Old Value at row: " + rowIndex +" is"+prevValue)
+             console.log("new Value at row: " + rowIndex +" is"+newValue)
+             //moleFrac.push(newValue)
+
+
+
+         if (newValue !== prevValue) {
+                          // Value has changed, update the array
+                          input.setAttribute("data-prev-value", newValue);
+                          //const rowIndex = input.closest("tr").rowIndex - 1;
+                           const rowIndex =input.closest("tr").rowIndex - 1;
+
+
+                          // Ensure the array has the same length as the number of rows
+                          //while (valuesArray.length <= rowIndex) {
+
+                         // }
+
+                         // valuesArray[rowIndex] = newValue;
+                      }
+
+            console.log("----------01");
+                   frac.push(input.value)
+                   //valuesArray.push({rowIndex,newValue})
+                   console.log("----------02")
+                   valuesArray=filterUniqueIndexes(indexes,frac);
+
+                   console.log(filterUniqueIndexes(indexes,frac));
+            }
+
+          function filterUniqueIndexes(indexes, values) {
+            const uniqueElements = {}; // Object to store the last index of each unique element
+            const filteredIndexes = [];
+            const filteredValues = [];
+
+            for (let i = 0; i < indexes.length; i++) {
+              const idx = indexes[i];
+              const val = values[i];
+
+              // Check if the element is already in the object
+              if (uniqueElements.hasOwnProperty(idx)) {
+                // If it is, update the last index
+                uniqueElements[idx] = i;
+              } else {
+                // If it's not, add it to the object
+                uniqueElements[idx] = i;
+                filteredIndexes.push(idx);
+                filteredValues.push(val);
+              }
+            }
+
+            // Use the filtered indexes to get the corresponding values
+            const filteredValueArray = filteredIndexes.map((idx) => values[uniqueElements[idx]]);
+
+            return [filteredIndexes, filteredValueArray];
+          }
+
+          function deleteElementAtIndexInAllArrays(arrOfArrays, indexToDelete) {
+            if (indexToDelete < 0) {
+              throw new Error('Index must be a non-negative number');
+            }
+
+            for (let i = 0; i < arrOfArrays.length; i++) {
+              const innerArray = arrOfArrays[i];
+              if (indexToDelete < innerArray.length) {
+                innerArray.splice(indexToDelete, 1);
+              }
+            }
+          }
+
+
+
 
