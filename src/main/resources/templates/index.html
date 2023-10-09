@@ -43,21 +43,15 @@
     <div class="row">
          <div class ="col-md-6">
         <p>
-            <input type="text" name="temperature" placeholder="Temperature (in K)"
+            <input type="text" name="temperature" placeholder="T, (in K)"
                    class="form-control" required style="max-width: 120px; margin: 0 auto" id = "temp"/>
         </p>
 
         <p>
-            <input type="text" name="pressure" placeholder="Pressure (in MPa)"
+            <input type="text" name="pressure" placeholder="P (in MPa)"
                    class="form-control" required style="max-width: 120px; margin: 0 auto" id = "press"/>
         </p>
 
-             <p>
-
-                 <input type="text" name="pressure" placeholder="Initial mole fractions"
-                        class="form-control" required style="max-width: 120px; margin: 0 auto" id = "xMol"/>
-
-             </p>
          </div>
 
         <div class="col-md-6">
@@ -66,11 +60,26 @@
             <input id="names" type="text" name="Search component" placeholder="Add"
                    class="form-control" required style="max-width: 120px; margin: 0 auto" />
             </label>
+
+           <!-- <label for = "initialMolefrac">
+                <input id="initialMolefrac" type="number" name="Enter mole frac" placeholder="Add"
+                       class="form-control" required style="max-width: 120px; margin: 0 auto" />
+            </label> -->
             <input id="addButton" type="submit" class="btn btn-primary"
                    value="Add" />
 
+            <div class="col-md-6">
 
+
+                <input id="calculate" type="submit" class="btn btn-primary"
+                       value="calculate" />
+
+
+            </div>
         </div>
+
+
+
 
         <div class="col-md-6">
 
@@ -79,7 +88,7 @@
             <tbody>
 
             <thead>
-                <th>index</th>
+
                 <th>Chemical </th>
                 <th> Mole fraction </th>
                 <th> Remove component</th>
@@ -87,10 +96,14 @@
 
 
             </tbody>
+            <div>
+                <input id="checkSum" type="submit" class="btn btn-primary"
+                       value="checkSum" />
+            </div>
         </table>
-
         </div>
-
+        <div class="col-md-6">
+        </div>
             <!-- https://www.w3schools.com/php/php_ajax_livesearch.asp-->
         </div>
 
@@ -99,7 +112,7 @@
 
    <div th:replace="navigation :: footer_menu"></div>
 
-    <script type="text/javascript" th:src ="@{/js/flash_new.js}"></script>
+    <script type="text/javascript" th:src ="@{/js/flash_new_v3.js}"></script>
 </div>
 </body>
 </html>

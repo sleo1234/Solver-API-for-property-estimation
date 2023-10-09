@@ -21,7 +21,6 @@ $(document).ready(function() {
   var index =1;
 $('#addButton').on('click', function() {
         const name = $("input[name='Search component']").val();
-        const initMoleFrac = $("input[name='Enter mole frac']").val();
        var newRow ='';
 
         // Check if name is not empty
@@ -30,7 +29,7 @@ $('#addButton').on('click', function() {
 
              if (compSet.has(name)){
             // Add a new row to the DataTable
-            newRow = table.row.add([index,name, initMoleFrac, '<td><span class="removeRow"><button type="button" id ="removeButton" class="btn btn-danger btn-rounded btn-sm my-0"> Remove </button></span></td>']).draw().node();
+            newRow = table.row.add([index,name, '', '<td><span class="removeRow"><button type="button" id ="removeButton" class="btn btn-danger btn-rounded btn-sm my-0" onblur=deleteElementAtIndexInAllArrays(valuesArray,this-1)> Remove </button></span></td>']).draw().node();
             compSet.delete(name)
             addedComponents.add(name);
             index++;
@@ -67,7 +66,7 @@ $('#addButton').on('click', function() {
             });
 
             // Add an input field for Mole frac (make it editable)
-            const moleFracInput = $('<input type="number" data-prev-value=' + initMoleFrac+'class="moleFracInput" placeholder="Enter a value less than 1" onchange=updateValue(this)>');
+            const moleFracInput = $('<input type="number" data-prev-value="" class="moleFracInput" placeholder="Enter a value less than 1" onchange=updateValue(this)>');
 
             $(newRow).find('td:eq(2)').html(moleFracInput);
 
