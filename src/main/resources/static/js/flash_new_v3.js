@@ -5,7 +5,7 @@ $(document).ready(function() {
     getComponents()
     var addedComponents = new Set();
     const table = $('#dataTable').DataTable();
-        var mapData=[]
+
         autoComplete(compSet)
         getFlashTPParams()
     // Handle search and add row
@@ -40,47 +40,22 @@ $(document).ready(function() {
 
             // Handle Mole frac input changes
             moleFracInput.on('blur', function() {
-            var indexes=[]
-
                 const moleFracValue = $(this).val();
                 // Add the Name and Mole frac values to an array only if the value has changed
                 if (moleFracValue !== '') {
-                     var chemicals=Array.from(addedComponents)
-                      console.log(chemicals)
-                    for (var i=1; i<= compSet.size; i++){
 
-                   const rowIndex =this.closest("tr").rowIndex - 1;
-                   indexes.push(rowIndex);
-
-                    }
-
-                    addToDataArray(name, moleFracValue);
                     addData(name, moleFracValue)
                 }
             });
         }
     });
 
-    const dataArray = [];
     const dataMap = new Map()
 
-    // Data array to store Name and Mole frac values
 
-
-    // Function to add values to the data array
-    function addToDataArray(name, moleFracValue) {
-
-
-        dataArray.push({ name, moleFracValue });
-
-
-    }
-
-
-    function addData(name, moleFracValue){
-
-    dataMap.set(name,moleFracValue)
-    }
+   function addData(name, moleFracValue){
+   dataMap.set(name,moleFracValue)
+   }
 
     // Function to remove a row
     function removeRow(rowToRemove, nameToRemove) {
@@ -91,73 +66,81 @@ $(document).ready(function() {
          addedComponents.delete(name)
          autoComplete(compSet)
                 // Remove the corresponding data from the dataArray
-        const indexToRemove = dataArray.findIndex(item => item.name === nameToRemove);
-        filteredArray = dataArray.filter(obj => obj.name !== nameToRemove);
-        dataMap.delete(nameToRemove)
-        console.log("heree: " + dataArray)
-        if (indexToRemove !== -1) {
-            //filteredArray.splice(indexToRemove, 1);
-             dataArray.splice(indexToRemove, 1);
-             console.log("after removal");
-             mapData=filterLastMoleFracForUniqueNames(dataArray)
-            console.log(filterLastMoleFracForUniqueNames(dataArray)); // Updated dataArray after removal
-        }
+       // const indexToRemove = dataArray.findIndex(item => item.name === nameToRemove);
+
+
+            dataMap.delete(nameToRemove)
+
     }
 
-
-
-
-    function filterLastMoleFracForUniqueNames(dataArray) {
-        const uniqueNamesMap = new Map();
-
-        // Iterate through the array to keep track of the last mole fraction value for each name
-        for (let i = 0; i < dataArray.length; i++) {
-            const obj = dataArray[i];
-            const name = obj.name;
-            const moleFracValue = obj.moleFracValue;
-
-            // Update the map with the latest mole fraction value for each name
-            uniqueNamesMap.set(name, moleFracValue);
-           // dataArray = uniqueNamesMap
-        }
-        return uniqueNamesMap
-}
-
-
-
-
-
+                          var x=[]
+                          var y=[]
+                          var vaporFrac
    function getFlashTPParams(){
               $('#calculate').on('click', function(){
                var chemicals=[]
                var compValues=[]
+
               temp=$("input[name='temperature']").val()
               press=$("input[name='pressure']").val()
              console.log("Temperature: "+temp)
              console.log("Pressure: "+press)
-
-                 filterLastMoleFracForUniqueNames(dataArray)
-                 console.log("-0-0 "+table.columns().data()[0]);
-                 console.log("-0-0 "+table.columns().data()[1]);
-
-             const iterator1 = mapData[Symbol.iterator]();
-
-              console.log(dataMap)
               dataMap.forEach(function (item, key, mapObj) {
                  chemicals.push(key)
                  compValues.push(item)
               });
              floatValues = compValues.map(c=>parseFloat(c))
-               console.log("---------- "+chemicals)
-               console.log("---------- "+compValues)
+               console.log("---------- "+Array.from(chemicals))
+               console.log("---------- "+Array.from(compValues)+ " "+ compValues instanceof Array)
                const sum = floatValues.reduce((c,d)=> c+d)
                console.log("-----Sum "+sum)
                if (sum > 1){
                alert("Sum is greater than 1")
                }
+
+               if (sum <0.999){
+                              alert("Sum is less than 1")
+                }
+
+               flashTP(temp,press,Array.from(chemicals),Array.from(floatValues))
+               alert("vapour fraction: "+vaporFrac)
+                $("input[name='vap mole frac']").val(vaporFrac)
               })
 
               }
+
+
+              function flashTP(t,p,chemicalList, moleFractionValue){
+
+               postData = {
+                 "t": t,
+                 "p": p,
+                 "names": chemicalList,
+                 "xmol": moleFractionValue
+                      }
+                       console.log("post data: "+JSON.stringify(postData))
+               url="http://localhost:8081/api/flash_tp"
+
+                $.ajax({
+                method:"POST",
+                url: url,
+                data: JSON.stringify(postData),
+                contentType:"application/json",
+                async: false,
+               headers: {
+                     Accept: 'application/json;charset=utf-8',
+                     contentType: 'application/json;charset=utf-8'
+                   }
+               }).done(function(data){
+               console.log(data.x)
+
+
+                 vaporFrac=data.vapFrac
+                 x=data.x
+                 y=data.y
+
+               })
+               }
 
 });
 

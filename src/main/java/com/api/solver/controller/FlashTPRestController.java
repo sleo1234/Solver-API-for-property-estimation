@@ -14,6 +14,7 @@ import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.cloud.openfeign.FeignAutoConfiguration;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.fasterxml.jackson.core.*;
@@ -38,7 +39,7 @@ public class FlashTPRestController {
     ApiUtil apiUtil = new ApiUtil();
 
 
-    @PostMapping("/flash_tp")
+    @PostMapping(value = "/flash_tp",consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<FlashTPResponse> flashTP (@RequestBody FlashTPBody flashTPBody) throws ParseException, JsonProcessingException {
 
 
