@@ -191,8 +191,8 @@ public class SolverTests {
         Double[] xMol = new Double[3];
         int N_c = xMol.length;
 
-        Double T = 400.0;
-        Double press = 3.2;
+        Double T = 420.0;
+        Double press = 3.0;
 
 
 
@@ -227,7 +227,10 @@ public class SolverTests {
         body.setPc(Arrays.asList(P_cr));
         body.setOmega(Arrays.asList(omega_i));
 
-        flash.flashTP(T, press, xMol,body);
+        //flash.flashTXVapFrac(T, press, xMol,body);
+
+        flash.flahTXNRaphson(T,0.5,xMol,body);
+
     }
 
 

@@ -4,6 +4,7 @@ import com.api.solver.flashapi.ComponentResponseBody;
 import com.api.solver.flashapi.FlashTPBody;
 import com.api.solver.propertyPackage.PropertyPackage;
 import com.api.solver.util.ApiUtil;
+import org.bouncycastle.oer.its.ieee1609dot2.basetypes.SymmetricEncryptionKey;
 import org.nfunk.jep.ParseException;
 
 import java.util.ArrayList;
@@ -1294,6 +1295,50 @@ System.out.println("----------++++++++++++++++++++++ K length"+N_c);
         System.out.println("===================   line 1272   ");
         solver.printArr(vapComp);
         return y;
+    }
+
+
+
+    public Double flashTXVapFrac(Double T, Double press, Double[] xMol, ComponentResponseBody body) throws ParseException {
+
+        flashTP(T,press,xMol,body);
+        System.out.println("Returned vap frac: "+getVapFrac());
+        return getVapFrac();
+
+    }
+
+
+    public Double flahTXNRaphson(Double T, Double vapourFraction, Double[] xMol, ComponentResponseBody body) throws ParseException {
+
+        Double Pinit = 0.0;
+       int len = xMol.length;
+       int MAX_ITER=30;
+       Double h = 0.0002;
+        Double [] Pb = new Double[MAX_ITER];
+        Double [] Pi0= PR.calcPi(T);
+
+        Double [] fVal=new Double[MAX_ITER];
+        Double [] fDerVal=new Double[MAX_ITER];
+
+        for (int i=0; i < len; i++){
+
+            Pinit = Pinit +xMol[i]* Pi0[i];
+
+
+        }
+        Pb[0]=Pinit;
+
+
+        for (int j = 0; j < MAX_ITER-1; j++) {
+          fVal[j]=flashTXVapFrac(T,Pb[j],xMol,body)-vapourFraction;
+            fDerVal[j]=flashTXVapFrac(T,Pb[j]+h,xMol,body)-flashTXVapFrac(T,Pb[j]-h,xMol,body);
+            Pb[j+1]=Pb[j]-2*h*(fVal[j]/fDerVal[j]);
+
+        }
+
+        System.out.println("Returned bubble Point: ");
+         solver.printArr(Pb);
+   return Pb[MAX_ITER-2];
     }
 
 

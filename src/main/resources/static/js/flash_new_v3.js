@@ -103,8 +103,8 @@ $(document).ready(function() {
                 }
 
                flashTP(temp,press,Array.from(chemicals),Array.from(floatValues))
-               alert("vapour fraction: "+vaporFrac)
-                $("input[name='vap mole frac']").val(vaporFrac)
+              // alert("vapour fraction: "+vaporFrac)
+                $("#vapMolefFrac").val(vaporFrac)
               })
 
               }
@@ -135,7 +135,7 @@ $(document).ready(function() {
                console.log(data.x)
 
 
-                 vaporFrac=data.vapFrac
+                 vaporFrac=(data.vapFrac)
                  x=data.x
                  y=data.y
 
