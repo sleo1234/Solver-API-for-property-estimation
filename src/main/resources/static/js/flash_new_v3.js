@@ -76,13 +76,16 @@ $(document).ready(function() {
                           var x=[]
                           var y=[]
                           var vaporFrac
+                          var bubblePointPressure
    function getFlashTPParams(){
               $('#calculate').on('click', function(){
                var chemicals=[]
                var compValues=[]
 
               temp=$("input[name='temperature']").val()
+           //   alert("Type of: temp" +(Number(temp))!==NaN)
               press=$("input[name='pressure']").val()
+              x=$("input[name='Vapor mole fraction']").val()
              console.log("Temperature: "+temp)
              console.log("Pressure: "+press)
               dataMap.forEach(function (item, key, mapObj) {
@@ -95,19 +98,46 @@ $(document).ready(function() {
                const sum = floatValues.reduce((c,d)=> c+d)
                console.log("-----Sum "+sum)
                if (sum > 1){
-               alert("Sum is greater than 1")
+               alert("Sum of mole fractions is greater than 1")
                }
 
                if (sum <0.999){
-                              alert("Sum is less than 1")
+                              alert("Sum of mole fractions is less than 1")
                 }
-
+              if ( !isNaN(temp) && !isNaN(press) && x=="" ){
                flashTP(temp,press,Array.from(chemicals),Array.from(floatValues))
               // alert("vapour fraction: "+vaporFrac)
                 $("#vapMolefFrac").val(vaporFrac)
-              })
+              }
+
+             // if ( !isNaN(temp) && !isNaN(x) && press==""){
+                        console.log("x values: "+ x);
+                       flashTX(temp,x,Array.from(chemicals),Array.from(floatValues))
+                        $("#press").val(bubblePointPressure)
+
+             // }
+
+
+
+
+
+
+              //  if (!isNaN(temp) && !isNaN(press) && !isNaN(x)){
+
+              //  alert("Please select 2 out of 3 parameters for flash calculation")
+                //}
+
+
+
+
+
+
+
+
 
               }
+
+              )}
 
 
               function flashTP(t,p,chemicalList, moleFractionValue){
@@ -143,7 +173,7 @@ $(document).ready(function() {
                }
 
 
-           function flashTX(t,x,chemicalList,moleFractionValue){
+               function flashTX(t,x,chemicalList,moleFractionValue){
                //x - the desired mole fraction of the vapour
                //moleFractionValue - initial mole fraction composition of the mixture
 
@@ -171,7 +201,25 @@ $(document).ready(function() {
                })
 
                }
+
 });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 function getComponents() {
