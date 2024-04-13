@@ -41,15 +41,10 @@ public class FlashTPRestControllerTest {
         requestBody.setT(400.0);
 
        System.out.println(requestBody.getNames());
-     List<Double> Tc = Arrays.asList(369.83, 425.12, 469.7);
-     List<Double> Pc = (Arrays.asList(42.48, 37.96, 33.7));
-     List<Double> omega = Arrays.asList(0.152, 0.193, 0.251);
+         List<Double> Tc = Arrays.asList(369.83, 425.2, 469.7);
+         List<Double> Pc = (Arrays.asList(4.246, 3.8, 3.374));
+         List<Double> omega = Arrays.asList(0.152, 0.193, 0.251);
         ComponentResponseBody mockResponse = new ComponentResponseBody(Tc, Pc, omega);
-
-       // ResponseEntity<ComponentResponseBody> mockResponse = apiClient.getPropertiesByName(requestBody.getNames());
-
-        //ResponseEntity<Object> mockResponse = new ComponentResponseBody(Tc, Pc, omega);
-
 
        when(apiClient.getPropertiesByName(any())).thenReturn(ResponseEntity.ok(mockResponse));
 
@@ -57,7 +52,7 @@ public class FlashTPRestControllerTest {
         MvcResult result = mockMvc.perform(post(url).contentType("application/json")
                 .content(objectMapper.writeValueAsString(requestBody)))
                 .andExpect(status().isOk()).andReturn();
-
+           System.out.println(result.getResponse().getContentAsString());
 
     }
 }

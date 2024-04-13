@@ -1,9 +1,7 @@
 package com.api.solver.controller;
 
 
-import com.api.solver.flashapi.ComponentResponseBody;
-import com.api.solver.flashapi.FlashTPBody;
-import com.api.solver.flashapi.FlashTPResponse;
+import com.api.solver.flashapi.*;
 import com.api.solver.numerical.FlashCalculation;
 import com.api.solver.service.APIClient;
 
@@ -93,6 +91,51 @@ public class FlashTPRestController {
 
     }
 
+
+    @PostMapping(value = "/flash_tx",consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<FlashTXResponse> flashTP (@RequestBody FlashTXBody flashTXBody) throws ParseException, JsonProcessingException {
+
+        int len = flashTXBody.getXmol().size();
+
+        Double[] Tc = new Double[len];
+        Double[] Pc = new Double[len];
+        Double[] acc = new Double[len];
+        Double [] x_init= new Double[len];
+
+        List<String> names = flashTXBody.getNames();
+
+        ResponseEntity<com.api.componentdb.entity.ComponentResponseBody> componentDbServiceResponse = apiClient.getPropertiesByName(names);
+        Object responseDb = componentDbServiceResponse.getBody();
+
+
+        System.out.println("-----------------------------------");
+        System.out.println(responseDb);
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        String jsonReponse = mapper.writeValueAsString(componentDbServiceResponse.getBody());
+        ComponentResponseBody responseApiClient = mapper.readValue(jsonReponse,
+                ComponentResponseBody.class);
+
+        FlashCalculation flash = new FlashCalculation();
+
+
+        List<Double> Pcr = responseApiClient.getPc();
+        List<Double> Tcr = responseApiClient.getTc();
+        List<Double> omega = responseApiClient.getOmega();
+
+
+
+        x_init = apiUtil.toArray(flashTXBody.getXmol());
+        Tc = apiUtil.toArray(Tcr);
+        Pc = apiUtil.toArray(Pcr);
+        acc = apiUtil.toArray(omega);
+        flash.setParams(acc,Tc,Pc,x_init);
+        flash.flashTXNRaphson(flashTXBody.getT(), flashTXBody.getX(),x_init,responseApiClient);
+        Double [] y = flash.getVapComp();
+        Double bubblePoint=flash.getBubblePointPressure();
+        FlashTXResponse response  = new FlashTXResponse(x_init,y,bubblePoint);
+        return new ResponseEntity<>(response,HttpStatus.OK);
+    }
 
 
 

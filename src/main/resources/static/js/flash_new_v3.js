@@ -142,24 +142,36 @@ $(document).ready(function() {
                })
                }
 
+
+           function flashTX(t,x,chemicalList,moleFractionValue){
+               //x - the desired mole fraction of the vapour
+               //moleFractionValue - initial mole fraction composition of the mixture
+
+                postData = {
+                                "t": t,
+                                "x": x,
+                                "names": chemicalList,
+                                "xmol": moleFractionValue
+                                     }
+                 url="http://localhost:8081/api/flash_tx"
+                 $.ajax({
+                                method:"POST",
+                                url: url,
+                                data: JSON.stringify(postData),
+                                contentType:"application/json",
+                                async: false,
+                               headers: {
+                                     Accept: 'application/json;charset=utf-8',
+                                     contentType: 'application/json;charset=utf-8'
+                                   }
+                               }).done(function(data){
+                               bubblePointPressure=data.bubblePoint
+                               console.log(data.bubblePoint)
+
+               })
+
+               }
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 function getComponents() {
