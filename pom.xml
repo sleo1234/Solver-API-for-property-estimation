@@ -18,6 +18,10 @@
 		<spring-cloud.version>2022.0.3</spring-cloud.version>
 	</properties>
 	<dependencies>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-actuator</artifactId>
+		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.nfunk/jep -->
 		<dependency>
 			<groupId>org.scijava</groupId>
@@ -147,7 +151,9 @@
 
 
 	</dependencies>
-
+     <modules>
+		 <module>../database-properties</module>
+	 </modules>
 	<build>
 		<plugins>
 			<plugin>

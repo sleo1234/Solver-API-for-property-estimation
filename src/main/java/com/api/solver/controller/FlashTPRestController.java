@@ -42,7 +42,6 @@ public class FlashTPRestController {
     @PostMapping(value = "/flash_tp",consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<FlashTPResponse> flashTP (@RequestBody FlashTPBody flashTPBody) throws ParseException, JsonProcessingException {
 
-
         int len = flashTPBody.getXmol().size();
 
         Double[] Tc = new Double[len];
@@ -52,7 +51,7 @@ public class FlashTPRestController {
 
         List<String> names = flashTPBody.getNames();
 
-        ResponseEntity<Object> componentDbServiceResponse = apiClient.getPropertiesByName(names);
+        ResponseEntity<com.api.componentdb.entity.ComponentResponseBody> componentDbServiceResponse = apiClient.getPropertiesByName(names);
         Object responseDb = componentDbServiceResponse.getBody();
 
 
@@ -60,7 +59,7 @@ public class FlashTPRestController {
         System.out.println(responseDb);
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-       String jsonReponse = mapper.writeValueAsString(componentDbServiceResponse.getBody());
+        String jsonReponse = mapper.writeValueAsString(componentDbServiceResponse.getBody());
         ComponentResponseBody responseApiClient = mapper.readValue(jsonReponse,
                 ComponentResponseBody.class);
 
@@ -73,10 +72,10 @@ public class FlashTPRestController {
 
 
 
-             x_init = apiUtil.toArray(flashTPBody.getXmol());
-             Tc = apiUtil.toArray(Tcr);
-             Pc = apiUtil.toArray(Pcr);
-             acc = apiUtil.toArray(omega);
+        x_init = apiUtil.toArray(flashTPBody.getXmol());
+        Tc = apiUtil.toArray(Tcr);
+        Pc = apiUtil.toArray(Pcr);
+        acc = apiUtil.toArray(omega);
 
         flash.setParams(acc,Tc,Pc,x_init);
         flash.flashTP(flashTPBody.getT(), flashTPBody.getP(), x_init,responseApiClient);
@@ -85,12 +84,13 @@ public class FlashTPRestController {
 
 
 
-            Double [] x = flash.getVapComp();
-            Double [] y = flash.getLiqComp();
-            Double vapFrac = flash.getVapFrac();
+        Double [] x = flash.getVapComp();
+        Double [] y = flash.getLiqComp();
+        Double vapFrac = flash.getVapFrac();
         FlashTPResponse response  = new FlashTPResponse(x,y,vapFrac);
 
-         return new ResponseEntity<>(response, HttpStatus.OK);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+
     }
 
 
