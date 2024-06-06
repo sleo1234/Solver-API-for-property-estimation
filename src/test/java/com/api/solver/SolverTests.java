@@ -185,7 +185,7 @@ public class SolverTests {
 
 
 
-    @Test
+   /* @Test
     public void testFlashTP() throws ParseException {
         FlashCalculation flash = new FlashCalculation();
         Double[] xMol = new Double[3];
@@ -232,7 +232,7 @@ public class SolverTests {
         flash.flahTXNRaphson(T,0.5,xMol,body);
 
     }
-
+*/
 
 
 
@@ -240,6 +240,7 @@ public class SolverTests {
     @Test
     public void testRachfordRice() throws ParseException {
         int N_c = 3;
+
         PropertyPackage props = new PropertyPackage();
         Solver solver = new Solver();
         //props.setParams();

@@ -204,24 +204,6 @@ $(document).ready(function() {
 
 });
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 function getComponents() {
 
         url = "http://localhost:8081/api/all_components";
@@ -229,8 +211,15 @@ function getComponents() {
        var data = $.ajax({
              type: "GET",
              url: url,
-             async: false
-             }).done(function (data){});
+             async: false,
+             headers: {
+             Accept: 'application/json;charset=utf-8',
+             contentType: 'application/json;charset=utf-8',
+             'Access-Control-Allow-Origin': 'https://ngrok.com/**',
+             'Access-Control-Request-Headers': 'x-requested-with'
+
+             }
+         }).done(function (data){});
         let len = data.responseJSON.length;
         components = data.responseJSON.map(components => components);
         compSet = new Set(components)

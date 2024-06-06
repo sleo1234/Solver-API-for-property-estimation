@@ -569,7 +569,7 @@ public class FlashCalculation {
 
 
 
-            System.out.println("_----- error: " + (Pb[j+1] - Pb[j]));
+       //     System.out.println("_----- error: " + (Pb[j+1] - Pb[j]));
             if (Math.abs(Pb[j+1] - Pb[j]) < 1e-8 && sumOfVec(y[j+1]) >0.998) {
                 bubblePress=Pb[j+1];
                 vapFrac=y[j+1];
@@ -578,18 +578,18 @@ public class FlashCalculation {
 
         }
 
-        System.out.println("Molar frac in vap. phase");
-        solver.printMat(y);
+        //System.out.println("Molar frac in vap. phase");
+       // solver.printMat(y);
 
         System.out.println("Fugacities in liq. phase");
-        solver.printMat(FiL);
+        //solver.printMat(FiL);
 
-        System.out.println("Fugacities in vap. phase");
-        solver.printMat(FiV);
-        System.out.println("FiVder1");
-        solver.printMat(FiVder1);
-        System.out.println("F---------");
-        solver.printMat(F);
+        //System.out.println("Fugacities in vap. phase");
+        //solver.printMat(FiV);
+        //System.out.println("FiVder1");
+        //solver.printMat(FiVder1);
+        //System.out.println("F---------");
+        /*solver.printMat(F);
         System.out.println("Fder---------");
         solver.printMat(Fder);
         System.out.println("FiLder1");
@@ -611,11 +611,11 @@ public class FlashCalculation {
         System.out.println("K   ");
         solver.printMat(K);
         System.out.println("Pressure : ");
-        solver.printArr(Pb);
+        solver.printArr(Pb);*/
 
 
         System.out.println("Bubble point pressure : " + bubblePress+" MPa with vap frac: ");
-        solver.printArr(vapFrac);
+       // solver.printArr(vapFrac);
 
 
         return bubblePress;
@@ -729,7 +729,7 @@ public class FlashCalculation {
         Double[] ki0b = PR.calcKi(T, b);
         Double[] ki0ab = PR.calcKi(T, sol);
         //1.036*Pcm*(T/Tcm);
-        System.out.println("===================== " + Pinit);
+       // System.out.println("===================== " + Pinit);
         for (int i=0; i < N_c; i++){
 
             ya[0][i] =xMol[i]*ki0a[i];
@@ -814,30 +814,30 @@ public class FlashCalculation {
             if ((Math.abs(vecSum(solver.divArr(FiL[j], FiV[j]), xMol)-1.0)  <1e-4 && (b-a)/2 < 1e-4)  ) {
                 bubbleP = sol;
                 Pb[j]=sol;
-                System.out.println("***************************************************val+ "+ (vecSum(solver.divArr(FiL[j], FiV[j]), xMol)-1.0));
+              //  System.out.println("***************************************************val+ "+ (vecSum(solver.divArr(FiL[j], FiV[j]), xMol)-1.0));
                 break;
             }
             if (((vecSum(solver.divArr(FiL[j], FiV[j]), xMol))-1.0) * (vecSum(solver.divArr(FiLa[j], FiVa[j]), xMol)-1.0) > 0 ) {
                 a = sol;
                 Pb[j]=sol;
-                System.out.println("***************************************************a "+ a);
+               // System.out.println("***************************************************a "+ a);
             } else {
                 b = sol;
                 Pb[j]=sol;
 
-                System.out.println("=b " + b);
+             //   System.out.println("=b " + b);
             }
 
             sol=(a+b)/2;
 
         }
 
-        System.out.println("Molar frac in vap. phase");
-        solver.printMat(yab);
+       // System.out.println("Molar frac in vap. phase");
+        //solver.printMat(yab);
 
-        System.out.println("****************** "+bubbleP);
-        System.out.println("Pb");
-        solver.printArr(Pb);
+        //System.out.println("****************** "+bubbleP);
+        //System.out.println("Pb");
+        //solver.printArr(Pb);
         return sol;
     }
     public Double bubblePointMVNR(Double T, Double [] xMol) throws ParseException{
@@ -907,10 +907,10 @@ public class FlashCalculation {
         }
 
 
-        System.out.println("Molar frac in vap. phase");
-        solver.printMat(y);
-        System.out.println("Pressure : ");
-        solver.printArr(Pb);
+      //  System.out.println("Molar frac in vap. phase");
+       // solver.printMat(y);
+        //System.out.println("Pressure : ");
+        //olver.printArr(Pb);
 
         return bubbleP;
     }
@@ -1178,10 +1178,10 @@ public class FlashCalculation {
         Double[] Tc = apiUtil.toArray(body.getTc());
         setParams(acc,Tc,Pc,xMol);
 
-
-        int MAX_ITER = 2;
-        int N_c = xMol.length;
         int iter=0;
+        int MAX_ITER = 8;
+        int N_c = xMol.length;
+
         Double[][] K = new Double[MAX_ITER][N_c];
         Double[][] x = new Double[MAX_ITER][N_c];
         Double[][] y = new Double[MAX_ITER][N_c];
@@ -1214,27 +1214,27 @@ public class FlashCalculation {
         PR.calcZc(T,press,xMol);
 
         System.out.print("--------0000000000000000000000000000");
-        solver.printArr(K[0]);
+       // solver.printArr(K[0]);
 
         List<Double> compressibility = PR.calcZc(T, press, xMol);
         int sols = compressibility.size();
 
         if (sols > 1){
-            System.out.println("===========================================(Line 1221 " + compressibility.get(0));
-            System.out.println("===========================================(Line 1222 " + compressibility.get(1));
+          //  System.out.println("===========================================(Line 1221 " + compressibility.get(0));
+           // System.out.println("===========================================(Line 1222 " + compressibility.get(1));
         }
 
         else{
-            System.out.println("===========================================(Line 1226 " + compressibility.get(0));
+           // System.out.println("===========================================(Line 1226 " + compressibility.get(0));
         }
 
 
         for (int j = 0; j < MAX_ITER-1; j++) {
-            solver.printArr(K[j]);
+            //solver.printArr(K[j]);
             teta[j] = solveVapFrac(K[j], xMol, 0.5);
 
             System.out.println("===========================================(00001) k values: ");
-            solver.printArr(K[0]);
+           // solver.printArr(K[0]);
 
 
             Double[] diff = solver.substract(K[j],1.0);
@@ -1243,7 +1243,7 @@ public class FlashCalculation {
 
             x[j] = solver.divArr(xMol, diff2);//check this equation
             ZiL[j]=PR.calcZc(T,press,x[j]).get(0);
-            solver.printArr(x[0]);
+           // solver.printArr(x[0]);
 
             PR.calcZc(T,press,x[j]);
 
@@ -1259,9 +1259,9 @@ public class FlashCalculation {
             PR.calcZc(T,press,y[j]);
             FiL[j] = PR.calcfi(T, press, x[j],ZiL[j]);
 
-            solver.printArr(x[j]);
+           // solver.printArr(x[j]);
 
-            solver.printArr(y[j]);
+           // solver.printArr(y[j]);
 
             FiV[j] = PR.calcfi(T, press, y[j],ZiV[j]);
 
@@ -1279,36 +1279,36 @@ public class FlashCalculation {
             //}
 
             System.out.println("error is: "+error);
-            if (error < 0.0001){
-                System.out.println("Flash stopped after "+iter+" iterations");
-                break;
-            }
+          if (Math.abs(error) < 0.0001){
+             System.out.println("Flash stopped after "+iter+" iterations");
+               break;
+         }
         }
-        System.out.println("************************* Molar frac matrix liquid phase");
-        solver.printMat(x);
-        System.out.println("************************* Molar frac matrix vapour phase");
-        solver.printMat(y);
+        //System.out.println("************************* Molar frac matrix liquid phase");
+      //  solver.printMat(x);
+      //  System.out.println("************************* Molar frac matrix vapour phase");
+       // solver.printMat(y);
 
-        solver.printArr(teta);
+       // solver.printArr(teta);
 
 
-        System.out.println("************************* Fugacities matrix liquid phase");
-        solver.printMat(FiL);
+       // System.out.println("************************* Fugacities matrix liquid phase");
+        //solver.printMat(FiL);
 
-        System.out.println("************************* Fugacities matrix vapour phase");
-        solver.printMat(FiV);
-        System.out.println("************************* END");
+       // System.out.println("************************* Fugacities matrix vapour phase");
+     //   solver.printMat(FiV);
+      //  System.out.println("************************* END");
 
-        System.out.println("************************* K matrix ");
-        solver.printMat(K);
-        System.out.println("************************* END");
+      //  System.out.println("************************* K matrix ");
+       // solver.printMat(K);
+        //System.out.println("************************* END");
 
 
         vapComp=y[MAX_ITER-2];
         liqComp=x[MAX_ITER-2];
         vapFrac=teta[MAX_ITER-2];
         System.out.println("===================   line 1272   ");
-        solver.printArr(vapComp);
+       // solver.printArr(vapComp);
         return y;
     }
 
@@ -1317,7 +1317,7 @@ public class FlashCalculation {
     public Double flashTXVapFrac(Double T, Double press, Double[] xMol, ComponentResponseBody body) throws ParseException {
 
         flashTP(T,press,xMol,body);
-        System.out.println("Returned vap frac: "+getVapFrac());
+      //  System.out.println("Returned vap frac: "+getVapFrac());
         return getVapFrac();
 
     }
@@ -1328,6 +1328,7 @@ public class FlashCalculation {
 
             err=err+y[i]*Math.log(K[i]);
         }
+        System.out.println("Error is=====: "+err);
         return err;
     }
 
@@ -1394,7 +1395,7 @@ public class FlashCalculation {
 
         }
         bubblePointPressure=bubblePressure;
-        solver.printArr(Pb);
+        //solver.printArr(Pb);
         System.out.println("Returned bubble Point: "+ bubblePressure+ " MPa( "+bubblePressure*10+" bar) after "+iter+" iterations");
         //
         return bubblePressure;

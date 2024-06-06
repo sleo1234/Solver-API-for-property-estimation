@@ -132,8 +132,9 @@ public class FlashTPRestController {
         flash.setParams(acc,Tc,Pc,x_init);
         flash.flashTXNRaphson(flashTXBody.getT(), flashTXBody.getX(),x_init,responseApiClient);
         Double [] y = flash.getVapComp();
+        Double [] x = flash.getLiqComp();
         Double bubblePoint=flash.getBubblePointPressure();
-        FlashTXResponse response  = new FlashTXResponse(x_init,y,bubblePoint);
+        FlashTXResponse response  = new FlashTXResponse(x,y,bubblePoint);
         return new ResponseEntity<>(response,HttpStatus.OK);
     }
 
