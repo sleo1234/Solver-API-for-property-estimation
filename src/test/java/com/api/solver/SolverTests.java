@@ -3,6 +3,7 @@ package com.api.solver;
 import com.api.solver.flashapi.ComponentResponseBody;
 import com.api.solver.flashapi.FlashTPBody;
 import com.api.solver.numerical.FlashCalculation;
+import com.api.solver.numerical.FlashUtil;
 import com.api.solver.numerical.PengRobinson;
 import com.api.solver.numerical.Solver;
 import com.api.solver.propertyPackage.PropertyPackage;
@@ -233,7 +234,34 @@ public class SolverTests {
 
     }
 */
+   @Test
+   public void testFlashUtil() throws ParseException {
+       FlashUtil flashUtil = new FlashUtil();
+         Double[] xMol = new Double[3];
+         Double[] T_cr = new Double[3];
+         Double[] P_cr = new Double[3];
+         Double[] omega_i = new Double[3];
+       omega_i[0] = 0.153;
+       omega_i[1] = 0.199;
+       omega_i[2] = 0.251;
 
+       T_cr[0] = 369.8;
+       T_cr[1] = 425.2;
+       T_cr[2] = 469.7;
+
+       P_cr[0] = 4.25; //MPa
+       P_cr[1] = 3.8;
+       P_cr[2] = 3.37;
+
+       xMol[0] = 0.5; //
+       xMol[1] = 0.25;  //
+       xMol[2] = 0.25; //
+
+       Double T = 400.0;
+       Double press = 3.0;
+       FlashUtil flashUtil1 = new FlashUtil(omega_i,P_cr,T_cr,xMol);
+         flashUtil.procedure(T,press,xMol);
+   }
 
 
 

@@ -37,19 +37,21 @@
     <div th:replace="navigation :: header_menu"></div>
 
     <div align="text-center">
-        <h1>Hydrocarbon flash solver using Peng Robinson</h1>
+        <h1>Hydrocarbon flash solver with Peng Robinson package</h1>
     </div>
 
     <div class="row">
          <div class ="col-md-6">
         <p>
             <input type="text" name="temperature" placeholder="T, (in K)"
-                   class="form-control" required style="max-width: 120px; margin: 0 auto" id = "temp"/>
+                   class="form-control" required style="max-width: 120px; margin: 0 auto" id = "temp">
+            <!-- <label for="press">T, (in K)</label><br> -->
         </p>
 
         <p>
-            <input type="text" name="pressure" placeholder="P (in MPa)"
-                   class="form-control" required style="max-width: 120px; margin: 0 auto" id = "press"/>
+            <input type="text" name="pressure" placeholder="Pressure (MPa)"
+                   class="form-control" required style="max-width: 120px; margin: 0 auto" id = "press">
+            <!--<label for="press">Pressure (MPa)</label><br> -->
         </p>
 
          </div>

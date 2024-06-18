@@ -2,7 +2,11 @@ let compSet = new Set()
 
 $(document).ready(function() {
     // Initialize DataTable
+    baseurl ="http://localhost:8081/";
+
+    getBaseUrl()
     getComponents()
+
     var addedComponents = new Set();
     const table = $('#dataTable').DataTable();
 
@@ -149,7 +153,7 @@ $(document).ready(function() {
                  "xmol": moleFractionValue
                       }
                        console.log("post data: "+JSON.stringify(postData))
-               url="http://localhost:8081/api/flash_tp"
+               url=baseurl+"api/flash_tp"
 
                 $.ajax({
                 method:"POST",
@@ -183,7 +187,7 @@ $(document).ready(function() {
                                 "names": chemicalList,
                                 "xmol": moleFractionValue
                                      }
-                 url="http://localhost:8081/api/flash_tx"
+                 url=baseurl+"api/flash_tx"
                  $.ajax({
                                 method:"POST",
                                 url: url,
@@ -206,7 +210,7 @@ $(document).ready(function() {
 
 function getComponents() {
 
-        url = "http://localhost:8081/api/all_components";
+        url = baseurl+"api/all_components";
 
        var data = $.ajax({
              type: "GET",
@@ -215,7 +219,7 @@ function getComponents() {
              headers: {
              Accept: 'application/json;charset=utf-8',
              contentType: 'application/json;charset=utf-8',
-             'Access-Control-Allow-Origin': 'https://ngrok.com/**',
+             'Access-Control-Allow-Origin': getBaseUrl(),
              'Access-Control-Request-Headers': 'x-requested-with'
 
              }
@@ -235,3 +239,13 @@ function autoComplete(val){
              $("#names").autocomplete({source: val});
              }
            }
+
+function getBaseUrl(){
+     burl=window.location.href
+   if (burl.includes("ngrok")){
+    baseurl=burl
+    console.log("Base URL: "+baseurl)
+   }
+  return baseurl
+
+}
