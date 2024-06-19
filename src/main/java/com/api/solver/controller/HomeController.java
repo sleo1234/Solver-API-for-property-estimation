@@ -13,6 +13,6 @@ public class HomeController {
     public String getHomePage (){
 
 
-        return "index";
+        return "index.html";
     }
 }
