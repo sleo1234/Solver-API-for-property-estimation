@@ -82,6 +82,10 @@ $(document).ready(function() {
                           var vaporFrac
                           var bubblePointPressure
    function getFlashTPParams(){
+                 temp_value = document.getElementById("temp").value;
+                 mole_frac_value = document.getElementById("vapMolefFrac").value;
+                 press_value = document.getElementById("press").value;
+
               $('#calculate').on('click', function(){
                var chemicals=[]
                var compValues=[]
@@ -111,33 +115,23 @@ $(document).ready(function() {
               if ( !isNaN(temp) && !isNaN(press) && x=="" ){
                flashTP(temp,press,Array.from(chemicals),Array.from(floatValues))
               // alert("vapour fraction: "+vaporFrac)
-                $("#vapMolefFrac").val(vaporFrac)
+                $("#vapMolefFrac").val(truncateDecimals(vaporFrac,2))
               }
 
-             // if ( !isNaN(temp) && !isNaN(x) && press==""){
+             if ( !isNaN(temp) && !isNaN(x) && press==""){
                         console.log("x values: "+ x);
                        flashTX(temp,x,Array.from(chemicals),Array.from(floatValues))
-                        $("#press").val(bubblePointPressure)
+                        $("#press").val(truncateDecimals(bubblePointPressure,2))
 
-             // }
+             }
+                    if ((temp_value !=="") && (press_value !=="") && (mole_frac_value !== "")){
+                    console.log("temp: "+temp_value)
+                    console.log("press: "+press_value)
+                    console.log("mole frac: "+mole_frac_value)
 
+                    alert("Enter only two values out of three")
 
-
-
-
-
-              //  if (!isNaN(temp) && !isNaN(press) && !isNaN(x)){
-
-              //  alert("Please select 2 out of 3 parameters for flash calculation")
-                //}
-
-
-
-
-
-
-
-
+                    }
 
               }
 
@@ -145,6 +139,7 @@ $(document).ready(function() {
 
 
               function flashTP(t,p,chemicalList, moleFractionValue){
+
 
                postData = {
                  "t": t,
@@ -248,4 +243,12 @@ function getBaseUrl(){
    }
   return baseurl
 
+}
+
+function truncateDecimals(number,digits) {
+  var multiplier = Math.pow(10, digits),
+         adjustedNum = number * multiplier,
+         truncatedNum = Math[adjustedNum < 0 ? 'ceil' : 'floor'](adjustedNum);
+
+     return truncatedNum / multiplier;
 }
