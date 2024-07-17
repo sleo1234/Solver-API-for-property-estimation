@@ -11,7 +11,9 @@
 	<groupId>com.api.solver</groupId>
 	<artifactId>com.api.solver</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
+	<!-- <packaging>pom</packaging> !-->
 	<name>com.api.solver</name>
+
 	<description>Numerical equation solver</description>
 	<properties>
 		<java.version>17</java.version>
@@ -23,7 +25,7 @@
 			<artifactId>spring-boot-starter-actuator</artifactId>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.nfunk/jep -->
-		<dependency>
+	 <dependency>
 			<groupId>org.scijava</groupId>
 			<artifactId>jep</artifactId>
 			<version>2.4.1</version>
