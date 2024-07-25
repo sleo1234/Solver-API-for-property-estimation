@@ -4,17 +4,27 @@ $(document).ready(function() {
     // Initialize DataTable
     baseurl ="http://localhost:8081/";
 
-    getBaseUrl()
-    getComponents()
+     getBaseUrl()
+
+
+     clickedCounter=0
+
+
+    $('#names').one('click', function() {
+            getComponents();
+            autoComplete(compSet)
+            console.log("here" +compSet)
+        });
 
     var addedComponents = new Set();
     const table = $('#dataTable').DataTable();
 
-        autoComplete(compSet)
+
         getFlashTPParams()
     // Handle search and add row
     $('#addButton').on('click', function() {
         const name = $("input[name='Search component']").val();
+
 
         // Check if name is not empty
         if (name.trim() !== '' && compSet.has(name)) {
@@ -203,28 +213,29 @@ $(document).ready(function() {
 
 });
 
-function getComponents() {
+    function getComponents() {
 
-        url = baseurl+"api/all_components";
+            url = baseurl+"api/all_components";
 
-       var data = $.ajax({
-             type: "GET",
-             url: url,
-             async: false,
-             headers: {
-             Accept: 'application/json;charset=utf-8',
-             contentType: 'application/json;charset=utf-8',
-             'Access-Control-Allow-Origin': getBaseUrl(),
-             'Access-Control-Request-Headers': 'x-requested-with'
+           var data = $.ajax({
+                 type: "GET",
+                 url: url,
+                 async: false,
+                 headers: {
+                 Accept: 'application/json;charset=utf-8',
+                 contentType: 'application/json;charset=utf-8',
+                 'Access-Control-Allow-Origin': getBaseUrl(),
+                 'Access-Control-Request-Headers': 'x-requested-with'
 
-             }
-         }).done(function (data){});
-        let len = data.responseJSON.length;
-        components = data.responseJSON.map(components => components);
-        compSet = new Set(components)
+                 }
+             }).done(function (data){});
+            let len = data.responseJSON.length;
 
-    return data.responseJSON;
-}
+            components = data.responseJSON.map(components => components);
+            compSet = new Set(components)
+
+        return data.responseJSON;
+    }
 
 function autoComplete(val){
           if (Object.prototype.toString.call(val) === '[object Set]'){
