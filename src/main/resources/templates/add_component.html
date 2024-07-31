@@ -31,7 +31,43 @@
       <label for="omega">Acentric Factor (ω)</label>
       <input type="text" class="form-control" id="omega" name="omega" required>
     </div>
+    <div class="form-group">
+      <label for="pc">Specific heat eq. coeff A (eg: cp(T) = A*T^3+B*T^2+C*T+D </label>
+      <input type="text" class="form-control" id="cpA" name="cpA" required>
+    </div>
+    <div class="form-group">
+      <label for="pc">Specific heat eq. coeff B</label>
+      <input type="text" class="form-control" id="cpB" name="cpB" required>
+    </div>
+
+    <div class="form-group">
+      <label for="pc">Specific heat eq. coeff C </label>
+      <input type="text" class="form-control" id="cpC" name="cpC" required>
+    </div>
+    <div class="form-group">
+      <label for="pc">Specific heat eq. coeff D</label>
+      <input type="text" class="form-control" id="cpD" name="cpD" required>
+    </div>
+
+
+    <div class="form-group">
+      <label for="pc">Antoine equation coeff PVAPA (eg: log10P = A - B/(T+C))</label>
+      <input type="text" class="form-control" id="pvapa" name="pvapa" required>
+    </div>
+    <div class="form-group">
+      <label for="pc">Antoine equation coeff PVAPB</label>
+      <input type="text" class="form-control" id="pvapb" name="pvapb" required>
+    </div>
+    <div class="form-group">
+      <label for="pc">Antoine equation coeff PVAPC</label>
+      <input type="text" class="form-control" id="pvapc" name="pvapc" required>
+    </div>
+
+
     <button type="submit" class="btn btn-primary">Save</button>
+    <button type="submit" class="btn btn-primary">Refresh component list</button>
+    &nbsp;
+    &nbsp;
   </form>
 </div>
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
