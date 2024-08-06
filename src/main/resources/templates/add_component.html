@@ -1,77 +1,137 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Form Example</title>
-  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <title>Add component</title>
+  <script src="https://code.jquery.com/jquery-3.6.4.js"></script>
+     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+            integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
+            crossorigin="anonymous">
+
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js" type="text-javascript"></script>
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+
+  <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+  <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+  <!--  Required meta tags -->
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <!--  Bootstrap CSS -->
+
+
+  <script type="text/javascript"
+          th:src="@{/webjars/bootstrap/js/bootstrap.min.js}"></script>
+
+  <div th:replace="navigation :: header_menu"></div>
+  <script type="text/javascript" th:src="@{/js/add_component.js}"></script>
+
 </head>
 <body>
-<div class="container mt-5">
+
+
+<div class="container mt-5" id="form-component">
   <h2 class="mb-4">Chemical Properties Form</h2>
-  <form action="/save" method="post">
-    <div class="form-group">
+  <div class="form-group row">
+
+    <form action="/save" method="post">
+      <div class="form-group row">
+    <div class="col-xs-2">
       <label for="name">Name</label>
       <input type="text" class="form-control" id="name" name="name" required>
     </div>
-    <div class="form-group">
-
+      </div>
+    <div class="form-group row">
+       <div class="col-xs-2">
       <label for="mole_WT">Molecular Weight</label>
       <input type="text" class="form-control" id="mole_WT" name="mole_WT" required>
+       </div>
     </div>
-    <div class="form-group">
+    <div class="form-group row">
+      <div class="col-xs-2">
       <label for="tc">Critical Temperature (K)</label>
       <input type="text" class="form-control" id="tc" name="tc" required>
     </div>
-    <div class="form-group">
+    </div>
+
+      <div class="form-group row">
+        <div class="col-xs-2">
       <label for="pc">Critical Pressure (MPa)</label>
       <input type="text" class="form-control" id="pc" name="pc" required>
     </div>
-    <div class="form-group">
+      </div>
+
+      <div class="form-group row">
+        <div class="col-xs-2">
       <label for="omega">Acentric Factor (ω)</label>
       <input type="text" class="form-control" id="omega" name="omega" required>
     </div>
-    <div class="form-group">
+      </div>
+
+      <div class="form-group row">
+        <div class="col-xs-2">
       <label for="pc">Specific heat eq. coeff A (eg: cp(T) = A*T^3+B*T^2+C*T+D </label>
       <input type="text" class="form-control" id="cpA" name="cpA" required>
     </div>
-    <div class="form-group">
+      </div>
+      <div class="form-group row">
+        <div class="col-xs-2">
       <label for="pc">Specific heat eq. coeff B</label>
       <input type="text" class="form-control" id="cpB" name="cpB" required>
     </div>
+      </div>
 
-    <div class="form-group">
+      <div class="form-group row">
+        <div class="col-xs-2">
       <label for="pc">Specific heat eq. coeff C </label>
       <input type="text" class="form-control" id="cpC" name="cpC" required>
     </div>
-    <div class="form-group">
+      </div>
+      <div class="form-group row">
+        <div class="col-xs-2">
       <label for="pc">Specific heat eq. coeff D</label>
       <input type="text" class="form-control" id="cpD" name="cpD" required>
     </div>
+      </div>
 
-
-    <div class="form-group">
+      <div class="form-group row">
+        <div class="col-xs-2">
       <label for="pc">Antoine equation coeff PVAPA (eg: log10P = A - B/(T+C))</label>
       <input type="text" class="form-control" id="pvapa" name="pvapa" required>
     </div>
-    <div class="form-group">
+      </div>
+      <div class="form-group row">
+        <div class="col-xs-2">
       <label for="pc">Antoine equation coeff PVAPB</label>
       <input type="text" class="form-control" id="pvapb" name="pvapb" required>
     </div>
-    <div class="form-group">
+      </div>
+      <div class="form-group row">
+        <div class="col-xs-2">
       <label for="pc">Antoine equation coeff PVAPC</label>
       <input type="text" class="form-control" id="pvapc" name="pvapc" required>
     </div>
 
+      </div>
 
-    <button type="submit" class="btn btn-primary">Save</button>
-    <button type="submit" class="btn btn-primary">Refresh component list</button>
+    <button type="submit" id="save-btn" class="btn btn-primary">Save</button>
+
     &nbsp;
     &nbsp;
+
   </form>
+    &nbsp;
+    &nbsp;
+  </div>
+  <button type="submit" id="refresh-btn" class="btn btn-primary">Refresh component list</button>
+
 </div>
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+&nbsp;
+&nbsp;
+&nbsp;
+<div th:replace="navigation :: footer_menu"></div>
+
 </body>
 </html>
