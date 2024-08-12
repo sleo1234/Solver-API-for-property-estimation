@@ -11,15 +11,17 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@RequestMapping("/api/v1")
 public class ComponentRestController {
 
     @Autowired
     private APIClient apiClient;
 
-    @PostMapping(value="api/save_component")
+    @PostMapping(value="save_component")
 
     public ResponseEntity<Component> addComponent (@RequestBody Component component)  throws ParseException, JsonProcessingException {
         return new ResponseEntity<>(apiClient.saveComponent(component), HttpStatus.CREATED);

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -26,7 +26,7 @@
           th:src="@{/webjars/bootstrap/js/bootstrap.min.js}"></script>
 
   <div th:replace="navigation :: header_menu"></div>
-  <script type="text/javascript" th:src="@{/js/add_component.js}"></script>
+
 
 </head>
 <body>
@@ -36,7 +36,7 @@
   <h2 class="mb-4">Chemical Properties Form</h2>
   <div class="form-group row">
 
-    <form action="/save" method="post">
+   <form>
       <div class="form-group row">
     <div class="col-xs-2">
       <label for="name">Name</label>
@@ -120,11 +120,10 @@
 
     &nbsp;
     &nbsp;
-
-  </form>
-    &nbsp;
+   </form>
     &nbsp;
   </div>
+
   <button type="submit" id="refresh-btn" class="btn btn-primary">Refresh component list</button>
 
 </div>
