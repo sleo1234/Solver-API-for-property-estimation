@@ -1,7 +1,8 @@
 $(document).ready(function() {
    // alert($("input").val());
-
-        url ="http://localhost:8081/api/v1/save_component"
+        baseurl ="http://localhost:8081/";
+           getBaseUrl()
+        url =baseurl+"/api/v1/save_component"
 
 
     $("#refresh-btn").on('click',function() {
@@ -53,4 +54,19 @@ function addComponent(url, body){
                     })
 
 }
+
+ function getBaseUrl(){
+            domain=window.location.href.split("/")
+            burl=domain[0]+"//"+domain[1]+domain[2]
+          if (burl.includes("ngrok")){
+           baseurl=burl
+           console.log("Base URL: "+baseurl)
+          }
+          if (burl.includes("app.thermo.lol")){
+          baseurl = burl
+           console.log("Base URL 2nd if: "+baseurl)
+          }
+         return baseurl
+
+       }
 

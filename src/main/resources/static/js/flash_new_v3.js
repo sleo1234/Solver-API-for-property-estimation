@@ -1,7 +1,7 @@
 let compSet = new Set()
 
 $(document).ready(function() {
-    // Initialize DataTable
+
     baseurl ="http://localhost:8081/";
 
      getBaseUrl()
@@ -251,6 +251,9 @@ function getBaseUrl(){
    if (burl.includes("ngrok")){
     baseurl=burl
     console.log("Base URL: "+baseurl)
+   }
+   if (burl.includes("app.thermo.lol")){
+   baseurl = burl
    }
   return baseurl
 
