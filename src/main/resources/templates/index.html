@@ -5,6 +5,7 @@
 
 
 <head >
+    <link rel="stylesheet" href="/textarea.css">
     <script
             src="https://code.jquery.com/jquery-3.6.4.js"></script>
 
@@ -18,7 +19,6 @@
     <meta name="viewport"
           content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <!--  Bootstrap CSS -->
-
 
     <script type="text/javascript"
             th:src="@{/webjars/bootstrap/js/bootstrap.min.js}"></script>
@@ -80,7 +80,7 @@
 
 
 
-
+        <div class ="row">
         <div class="col-md-6">
 
         <table style= "width:300px" align="text-center"
@@ -98,9 +98,13 @@
             </tbody>
 
         </table>
+
         </div>
-        <div class="col-md-6">
-        </div>
+            <div class="col-md-6">
+                <!-- Your textarea here -->
+                <textarea class="form-control textarea-postion" rows="5"></textarea>
+            </div>
+
             <!-- https://www.w3schools.com/php/php_ajax_livesearch.asp-->
         </div>
 
@@ -110,6 +114,7 @@
    <div th:replace="navigation :: footer_menu"></div>
 
     <script type="text/javascript" th:src ="@{/js/flash_new_v3.js}"></script>
+
 </div>
 </body>
 </html>
