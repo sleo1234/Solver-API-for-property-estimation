@@ -16,6 +16,16 @@ $(document).ready(function() {
             console.log("here" +compSet)
         });
 
+        $("#checkButton").on('click', function(){
+
+        list =$('textarea#stream').val();
+
+
+             //alert(typeof list[0][0])
+             alert(checkList(list,[...compSet]))
+
+        })
+
     var addedComponents = new Set();
     const table = $('#dataTable').DataTable();
 
@@ -266,3 +276,63 @@ function truncateDecimals(number,digits) {
 
      return truncatedNum / multiplier;
 }
+
+
+function checkList (list,db){
+
+
+let maplist = {};
+list.replace('\n','').split(',').forEach( function(pair){
+
+let [comp,mole_frac] = pair.split(':')
+maplist[comp] = parseFloat(mole_frac)
+})
+
+console.log("Maplist: "+JSON.stringify(maplist))
+
+  url = baseurl+"api/v1/validate_componentlist"
+
+
+//for (let key in obj) {
+//console.log("Key: "+key)
+//console.log("Value: "+obj[key])
+      //  if (obj.hasOwnProperty(key)) {
+        // //  maplist[key] =parseFloat(obj[key]);
+        //}
+    //}
+
+
+  postData = {"userInput":maplist,
+     "dbList":Array.from(db)}
+    //console.log("Data: "+JSON.stringify(data))
+
+
+  $.ajax({
+                method:"POST",
+                url: url,
+                data:JSON.stringify(postData),
+                contentType:"application/json",
+                async: false,
+               headers: {
+                     Accept: 'application/json;charset=utf-8',
+                     contentType: 'application/json;charset=utf-8',
+                      'Access-Control-Allow-Origin': getBaseUrl()
+                   }
+               }).done(function(data){
+
+               })
+let checkStreamResponse=data.responseJSON
+return checkStreamResponse
+}
+
+
+
+
+
+
+
+
+
+
+
+

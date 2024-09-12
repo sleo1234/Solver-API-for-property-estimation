@@ -5,7 +5,7 @@
 
 
 <head >
-    <link rel="stylesheet" href="/textarea.css">
+    <link rel="stylesheet" href="/js/textarea.css">
     <script
             src="https://code.jquery.com/jquery-3.6.4.js"></script>
 
@@ -54,6 +54,13 @@
             <!--<label for="press">Pressure (MPa)</label><br> -->
         </p>
 
+          <p>
+                 <textarea class="textarea-bellow" id="stream" rows="4" cols="10" placeholder="paste your stream here (eg: PROPANE 0.5 N-BUTANE:0.5)"></textarea>
+                 <input id="checkButton" type="submit" class="btn btn-primary"
+                        value="Check Stream" />
+          </p>
+
+
          </div>
 
         <div class="col-md-6">
@@ -76,8 +83,8 @@
             </label>
             <input id="calculate" type="submit" class="btn btn-primary"
                    value="calculate" />
-        </div>
 
+        </div>
 
 
         <div class ="row">
@@ -100,13 +107,9 @@
         </table>
 
         </div>
-            <div class="col-md-6">
-                <!-- Your textarea here -->
-                <textarea class="form-control textarea-postion" rows="5"></textarea>
-            </div>
 
-            <!-- https://www.w3schools.com/php/php_ajax_livesearch.asp-->
         </div>
+
 
     </div>
 
