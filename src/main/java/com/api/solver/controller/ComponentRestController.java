@@ -35,9 +35,10 @@ public class ComponentRestController {
     }
     @PostMapping("/validate_componentlist")
 
-    public String checkList(@RequestBody ValidateInput input){
+    public ResponseEntity<MessageBodyResponse> checkList(@RequestBody ValidateInput input){
 
-        String message="Stream OK.";
+        //String message="Stream OK.";
+        MessageBodyResponse message = new MessageBodyResponse();
 
         HashMap<String, Double> userInput = input.getUserInput();
         Set<String> dbList = input.getDbList();
@@ -48,21 +49,24 @@ public class ComponentRestController {
 
             checkSum = checkSum+userInput.get(key);
             if (checkSum < 0.999 && checkSum >= 1.000001){
-                message = "Stream not OK. Sum of mole fractions is not equal to 1.";
+                message.setMessage("Stream not OK. Sum of mole fractions is not equal to 1.");
+
             }
 
 
             if (!dbList.contains(key)){
+
                 invalidComponents.add(key);
             }
             if (invalidComponents.size()>0) {
-                message = "Stream not OK. Following components are not present in the database: " + Arrays.toString(invalidComponents.toArray());
+                message.setMessage("Stream not OK. Some components are not in the database: "+ Arrays.toString(invalidComponents.toArray()));
+                ///message.setNotInDatabase(invalidComponents);
             }
 
 
         }
 
-        return message;
+        return new ResponseEntity<>(message, HttpStatus.OK);
     }
 
 

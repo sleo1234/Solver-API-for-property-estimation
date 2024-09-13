@@ -18,11 +18,11 @@ $(document).ready(function() {
 
         $("#checkButton").on('click', function(){
 
-        list =$('textarea#stream').val();
+        list =$('textarea#stream').val()
 
 
              //alert(typeof list[0][0])
-             alert(checkList(list,[...compSet]))
+             checkList(list,[...compSet])
 
         })
 
@@ -282,7 +282,8 @@ function checkList (list,db){
 
 
 let maplist = {};
-list.replace('\n','').split(',').forEach( function(pair){
+console.log("List: "+list.replace('/\n/g',''))
+list.replace(/\n/g,'').replace(" ","").split(',').forEach( function(pair){
 
 let [comp,mole_frac] = pair.split(':')
 maplist[comp] = parseFloat(mole_frac)
@@ -304,25 +305,31 @@ console.log("Maplist: "+JSON.stringify(maplist))
 
   postData = {"userInput":maplist,
      "dbList":Array.from(db)}
-    //console.log("Data: "+JSON.stringify(data))
 
+   console.log("Post data: "+JSON.stringify(postData))
 
+  var response=""
   $.ajax({
                 method:"POST",
                 url: url,
                 data:JSON.stringify(postData),
-                contentType:"application/json",
+                contentType : 'application/json;charset=utf-8',
                 async: false,
                headers: {
                      Accept: 'application/json;charset=utf-8',
                      contentType: 'application/json;charset=utf-8',
                       'Access-Control-Allow-Origin': getBaseUrl()
                    }
-               }).done(function(data){
-
                })
-let checkStreamResponse=data.responseJSON
-return checkStreamResponse
+               .done(function(data){
+
+                response = data.message
+                 alert("response: "+response)
+               }).fail(function(data){
+                alert("failed")
+               })
+//let checkStreamResponse=data.responseJSON
+return response
 }
 
 
