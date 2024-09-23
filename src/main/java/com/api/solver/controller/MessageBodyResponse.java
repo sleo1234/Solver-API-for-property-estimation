@@ -17,5 +17,4 @@ public class MessageBodyResponse {
 
     private String message= "Stream OK.";
 
-
 }

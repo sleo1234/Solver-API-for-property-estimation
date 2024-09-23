@@ -35,6 +35,7 @@
 <body>
 <div class="container-fluid">
     <div th:replace="navigation :: header_menu"></div>
+    <div th:replace = "modal_fragments :: modal_dialog"></div>
 
     <div align="text-center">
         <h1>Hydrocarbon flash solver with Peng Robinson package</h1>
@@ -57,7 +58,7 @@
           <p>
                  <textarea class="textarea-bellow" id="stream" rows="4" cols="20" placeholder="paste your stream here (eg: PROPANE 0.5 N-BUTANE:0.5)"></textarea>
                  <input id="checkButton" type="submit" class="btn btn-primary"
-                        value="Check Stream" />
+                        value="Check Stream" data-toggle="modal" data-target="#myModal" />
           </p>
 
 
@@ -117,6 +118,7 @@
    <div th:replace="navigation :: footer_menu"></div>
 
     <script type="text/javascript" th:src ="@{/js/flash_new_v3.js}"></script>
+    <script type="text/javascript" th:src ="@{/js/common_modal.js}"></script>
 
 </div>
 </body>

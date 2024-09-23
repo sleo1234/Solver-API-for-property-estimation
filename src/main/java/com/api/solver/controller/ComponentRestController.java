@@ -37,7 +37,6 @@ public class ComponentRestController {
 
     public ResponseEntity<MessageBodyResponse> checkList(@RequestBody ValidateInput input){
 
-        //String message="Stream OK.";
         MessageBodyResponse message = new MessageBodyResponse();
 
         HashMap<String, Double> userInput = input.getUserInput();
@@ -45,24 +44,36 @@ public class ComponentRestController {
         ArrayList<String> invalidComponents = new ArrayList<>();
         Double checkSum=0.0;
 
+
         for (String key : userInput.keySet()){
-
             checkSum = checkSum+userInput.get(key);
-            if (checkSum < 0.999 && checkSum >= 1.000001){
-                message.setMessage("Stream not OK. Sum of mole fractions is not equal to 1.");
 
-            }
+        }
+        boolean equalToOne = (checkSum < 0.999 || checkSum >= 1.000001);
+
+        System.out.println("Check sum: "+checkSum);
+        for (String key : userInput.keySet()){
 
 
             if (!dbList.contains(key)){
 
                 invalidComponents.add(key);
             }
+
             if (invalidComponents.size()>0) {
-                message.setMessage("Stream not OK. Some components are not in the database: "+ Arrays.toString(invalidComponents.toArray()));
-                ///message.setNotInDatabase(invalidComponents);
+                message.setMessage("Stream not OK. Following components not in the database: "+ Arrays.toString(invalidComponents.toArray()));
+               break;
             }
 
+            else if (invalidComponents.size()==0 && !equalToOne){
+
+                message.setMessage("Stream not OK. Sum of mole fractions not equal to 1.");
+                break;
+            }
+
+            else {
+                message.setMessage("Stream OK.");
+            }
 
         }
 

@@ -1,6 +1,6 @@
 $(document).ready(function() {
    // alert($("input").val());
-        baseurl ="http://localhost:8081/";
+        baseurl ="http://localhost:8081";
            getBaseUrl()
         url =baseurl+"/api/v1/save_component"
 
@@ -46,7 +46,8 @@ function addComponent(url, body){
                      async: false,
                     headers: {
                           Accept: 'application/json;charset=utf-8',
-                          contentType: 'application/json;charset=utf-8'
+                          contentType: 'application/json;charset=utf-8',
+                         'Access-Control-Allow-Origin': getBaseUrl(),
                         }
                     })
                     .done(function(data){

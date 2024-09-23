@@ -325,6 +325,7 @@ console.log("Maplist: "+JSON.stringify(maplist))
 
                 response = data.message
                  alert("response: "+response)
+                 showModalDialog("Message", response)
                }).fail(function(data){
                 alert("failed")
                })
