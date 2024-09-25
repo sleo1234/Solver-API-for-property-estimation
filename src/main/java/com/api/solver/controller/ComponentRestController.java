@@ -49,7 +49,7 @@ public class ComponentRestController {
             checkSum = checkSum+userInput.get(key);
 
         }
-        boolean equalToOne = (checkSum < 0.999 || checkSum >= 1.000001);
+        boolean equalToOne = !(checkSum < 0.999 || checkSum >= 1.000001);
 
         System.out.println("Check sum: "+checkSum);
         for (String key : userInput.keySet()){

@@ -13,7 +13,7 @@ $(document).ready(function() {
     $('#names').one('click', function() {
             getComponents();
             autoComplete(compSet)
-            console.log("here" +compSet)
+
         });
 
         $("#checkButton").on('click', function(){
@@ -167,7 +167,7 @@ $(document).ready(function() {
                  "names": chemicalList,
                  "xmol": moleFractionValue
                       }
-                       console.log("post data: "+JSON.stringify(postData))
+
                url=baseurl+"api/flash_tp"
 
                 $.ajax({
@@ -278,18 +278,17 @@ function truncateDecimals(number,digits) {
 }
 
 
-function checkList (list,db){
+    function checkList (list,db){
+
+     let maplist={}
+    console.log("List: "+list.replace('/\n/g',''))
+    list.replace(/\n/g,'').replace(" ","").split(',').forEach( function(pair){
+
+    let [comp,mole_frac] = pair.split(':')
+    maplist[comp] = parseFloat(mole_frac)
+    })
 
 
-let maplist = {};
-console.log("List: "+list.replace('/\n/g',''))
-list.replace(/\n/g,'').replace(" ","").split(',').forEach( function(pair){
-
-let [comp,mole_frac] = pair.split(':')
-maplist[comp] = parseFloat(mole_frac)
-})
-
-console.log("Maplist: "+JSON.stringify(maplist))
 
   url = baseurl+"api/v1/validate_componentlist"
 
@@ -306,7 +305,7 @@ console.log("Maplist: "+JSON.stringify(maplist))
   postData = {"userInput":maplist,
      "dbList":Array.from(db)}
 
-   console.log("Post data: "+JSON.stringify(postData))
+console.log("map list: "+maplist)
 
   var response=""
   $.ajax({
@@ -324,14 +323,58 @@ console.log("Maplist: "+JSON.stringify(maplist))
                .done(function(data){
 
                 response = data.message
-                 alert("response: "+response)
+                 if (response === "Stream OK."){
+                         updateModal()
+                         showModalDialog("Message", response+ " Add stream?")
+                         $('#add_stream_list_btn').on('click', function(){
+                       addStreamDataToTable(maplist)
+                       $('textarea#stream').val('')
+                         })
+                 }
+                 else{
                  showModalDialog("Message", response)
+                 }
                }).fail(function(data){
-                alert("failed")
+                showErrorModal("An error occurred. Check your stream input.")
                })
 //let checkStreamResponse=data.responseJSON
 return response
 }
+
+
+function addStreamDataToTable(mapList){
+
+ const table = $('#dataTable').DataTable();
+ var addedComponents = new Set();
+ for (key in mapList){
+
+    const newRow = table.row.add([key, mapList[key], '<button class="removeRow">Remove</button>']).draw().node();
+    compSet.delete(key)
+    autoComplete(compSet)
+    addedComponents.add(key)
+    $(newRow).find('.removeRow').on('click', function() {
+                    const rowToRemove = $(this).closest('tr');
+                    const nameToRemove = rowToRemove.find('td:eq(0)').text();
+                    removeRow(rowToRemove, nameToRemove);
+                });
+
+                const moleFracInput = $('<input type="text" class="moleFracInput" placeholder="Mole frac">');
+                $(newRow).find('td:eq(1)').html(moleFracInput);
+
+                moleFracInput.val(mapList[key])
+
+                moleFracInput.on('blur', function() {
+                    const moleFracValue = $(this).val();
+                    if (moleFracValue !== '') {
+                        addData(key, moleFracValue)
+                    }
+                });
+
+ }
+}
+
+
+
 
 
 
