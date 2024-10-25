@@ -79,6 +79,7 @@ $(document).ready(function() {
 
    function addData(name, moleFracValue){
    dataMap.set(name,moleFracValue)
+   console.log("Data Map: "+dataMap)
    }
 
     // Function to remove a row
@@ -120,6 +121,7 @@ $(document).ready(function() {
                  chemicals.push(key)
                  compValues.push(item)
               });
+              console.log("Chemicals (check): "+Array.from(chemicals));
              floatValues = compValues.map(c=>parseFloat(c))
                console.log("---------- "+Array.from(chemicals))
                console.log("---------- "+Array.from(compValues)+ " "+ compValues instanceof Array)
@@ -293,15 +295,6 @@ function truncateDecimals(number,digits) {
   url = baseurl+"api/v1/validate_componentlist"
 
 
-//for (let key in obj) {
-//console.log("Key: "+key)
-//console.log("Value: "+obj[key])
-      //  if (obj.hasOwnProperty(key)) {
-        // //  maplist[key] =parseFloat(obj[key]);
-        //}
-    //}
-
-
   postData = {"userInput":maplist,
      "dbList":Array.from(db)}
 
@@ -365,13 +358,19 @@ function addStreamDataToTable(mapList){
 
                 moleFracInput.on('blur', function() {
                     const moleFracValue = $(this).val();
+                    console.log("Mole frac value from stream check: "+moleFracValue)
                     if (moleFracValue !== '') {
                         addData(key, moleFracValue)
                     }
                 });
 
+
+
  }
+
 }
+
+// get table data
 
 
 
