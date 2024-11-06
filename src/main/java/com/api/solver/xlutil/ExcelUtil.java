@@ -8,16 +8,14 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Getter
 @Setter
@@ -27,13 +25,20 @@ import java.util.Map;
 public class ExcelUtil {
     private String fileName;
 
+
     private int sheetIndex;
 
 
-    public Map<Integer, List<String>>  getData() throws IOException {
+
+    public Workbook getAbsolutePath() throws IOException{
         File xlfile = new File(getClass().getResource(fileName).getFile());
         FileInputStream file = new FileInputStream(xlfile.getAbsolutePath());
         Workbook workbook = new XSSFWorkbook(file);
+        return workbook;
+    }
+
+    public Map<Integer, List<String>>  getData() throws IOException {
+        Workbook workbook=getAbsolutePath();
         Sheet sheet = workbook.getSheetAt(sheetIndex);
 
         Map<Integer, List<String>> data = new HashMap<>();
@@ -60,5 +65,46 @@ public class ExcelUtil {
 
 
         return data;
+    }
+
+
+
+    public void readByCol(int colIndex) throws IOException {
+
+        Workbook workbook = getAbsolutePath();
+
+        Sheet sheet = workbook.getSheetAt(sheetIndex);
+        Iterator<Row> rowIterator = sheet.iterator();
+        while (rowIterator.hasNext()) {
+            Row row = rowIterator.next();
+            Iterator<Cell> cellIterator = row.cellIterator();
+            while (cellIterator.hasNext()) {
+                Cell cell = cellIterator.next();
+                int columnIndex = cell.getColumnIndex();
+                if (columnIndex == colIndex) {
+
+
+                switch (cell.getCellType()) {
+                    case STRING:
+                        System.out.print(cell.getStringCellValue() + "\t\t\t");
+                        break;
+                    case NUMERIC:
+                        System.out.print(cell.getNumericCellValue() + "\t\t\t");
+                        break;
+                    case BOOLEAN:
+                        System.out.print(cell.getBooleanCellValue() + "\t\t\t");
+                        break;
+                    case FORMULA:
+                        System.out.print(cell.getCellFormula() + "\t\t\t");
+                        break;
+                    default:
+                }
+            }
+            }
+            System.out.println("");
+        }
+
+
+
     }
 }
