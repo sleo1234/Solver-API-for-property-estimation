@@ -24,8 +24,8 @@ public class ExcelReaderTests {
         ExcelUtil excelUtil1 = new ExcelUtil(fileName,2);
 
 
-       Map<Integer, List<String>> data = excelUtil1.getData();
+
       //  System.out.println(data.get(0).get(1));
-        excelUtil1.readByCol(1);
+        excelUtil1.dfByCol(0);
     }
 }
