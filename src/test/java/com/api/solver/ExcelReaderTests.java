@@ -26,6 +26,7 @@ public class ExcelReaderTests {
 
 
       //  System.out.println(data.get(0).get(1));
-        excelUtil1.dfByCol(0);
+       // List<String> result = excelUtil1.dfByCol(2);
+           System.out.println(excelUtil1.getMapData());
     }
 }
