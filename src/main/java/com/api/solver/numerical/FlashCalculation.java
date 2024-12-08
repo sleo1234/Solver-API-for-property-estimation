@@ -1282,7 +1282,7 @@ public class FlashCalculation {
 
             System.out.println("error is: "+error);
           if (Math.abs(error) < 0.0001){
-             System.out.println("Flash stopped after "+iter+" iterations");
+             System.out.println("Flash TP stopped after "+iter+" iterations");
                break;
          }
         }
@@ -1398,7 +1398,7 @@ public class FlashCalculation {
         }
         bubblePointPressure=bubblePressure;
         //solver.printArr(Pb);
-        System.out.println("Returned bubble Point: "+ bubblePressure+ " MPa( "+bubblePressure*10+" bar) after "+iter+" iterations");
+        System.out.println("Returned bubble Point: "+ bubblePressure+ " MPa(a) ( "+bubblePressure*10+" bar(a) ) after "+iter+" iterations");
         //
         return bubblePressure;
     }

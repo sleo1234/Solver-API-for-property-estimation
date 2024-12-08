@@ -179,7 +179,8 @@ public class ExcelUtil {
                             break;
                         case NUMERIC:
                             System.out.print(cell.getNumericCellValue() + "\t\t\t");
-                            data.add( (T) Double.valueOf(cell.getNumericCellValue()));
+                            Double d = cell.getNumericCellValue();
+                            data.add( (T) d);
                             break;
                         case BOOLEAN:
                             System.out.print(cell.getBooleanCellValue() + "\t\t\t");
@@ -190,6 +191,7 @@ public class ExcelUtil {
                             data.add((T) cell.getCellFormula());
                             break;
                         default:
+                            data.add((T) cell.getStringCellValue());
                     }
                 }
             }
@@ -200,7 +202,21 @@ public class ExcelUtil {
      return data;
     }
 
+         public HashMap<String,Double> getMapData() throws IOException {
 
+          HashMap<String,Double> mapData = new HashMap<>();
+          List<String> components = dfByCol(0);
+          List<Double> molefrac = dfByCol(1);
+          int csize = components.size();
+          int msize = molefrac.size();
+
+          for (int i=0; i< csize;i++){
+                mapData.put(components.get(i),molefrac.get(i));
+
+          }
+
+          return mapData;
+         }
 
 
 
