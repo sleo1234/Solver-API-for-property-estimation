@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -30,6 +31,24 @@ public class FileAPi {
            Files.write(getDir(file.getOriginalFilename()), bytes);
 
            return ResponseEntity.ok("File uploaded successfully.");
+
+
+    }
+
+    public void resolveFileName(MultipartFile file){
+
+        String path = getDir(file.getOriginalFilename()).toString();
+
+        //list all files in the above path
+        File folder = new File(path);
+        File[] listOfFiles = folder.listFiles();
+
+        for (File f : listOfFiles) {
+            if (f.getName().equals(file.getOriginalFilename())) {
+                System.out.println(file.getName());
+            }
+        }
+
 
 
     }
